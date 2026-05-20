@@ -1,0 +1,22 @@
+{
+  "name": "ull-auditorium-seating",
+  "version": "1.0.0",
+  "description": "Interactive tool for assigning seating groups in the ULL Auditorium",
+  "repository": {
+    "type": "git",
+    "url": "git@github-personal:SamuelFriHer/ull-auditorium-seating.git"
+  },
+  "license": "MIT",
+  "author": "Samuel Frías",
+  "type": "module",
+  "main": "main.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
