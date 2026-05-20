@@ -1,3 +1,6 @@
+import "./styles/main.css";
+import "./styles/panel.css";
+import "./styles/venue.css";
 import { AppController } from "./controllers/AppController";
 
 const container = document.getElementById("app");

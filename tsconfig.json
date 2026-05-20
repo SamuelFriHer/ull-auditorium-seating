@@ -11,7 +11,7 @@
     "moduleResolution": "bundler",
     "target": "esnext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": [],
+    "types": ["vite/client"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
