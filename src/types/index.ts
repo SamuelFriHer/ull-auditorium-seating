@@ -92,6 +92,9 @@ export interface EventPayloadMap {
   "group:active-change": { id: string | null };
   "venue:loaded": { venue: VenueJSON };
   "venue:updated": void;
+  "venue:export": void;
+  "venue:import": { file: File };
+  "floor:change": { floor: number };
 }
 
 /**

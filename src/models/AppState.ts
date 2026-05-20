@@ -13,6 +13,8 @@ export class AppState {
   public activeGroupId: string | null;
   /** The current mode of selection (single, drag, none). */
   public selectionMode: SelectionMode;
+  /** The currently active floor (0, 1, or 2). */
+  public activeFloor: number;
 
   /**
    * Constructs a new AppState instance.
@@ -21,16 +23,19 @@ export class AppState {
    * @param selectedSeatIds - Initial selected seats.
    * @param activeGroupId - Initial active group.
    * @param selectionMode - Initial selection mode.
+   * @param activeFloor - Initial active floor (0, 1, 2).
    */
   constructor(
     venue: Venue,
     selectedSeatIds: string[] = [],
     activeGroupId: string | null = null,
     selectionMode: SelectionMode = SelectionMode.NONE,
+    activeFloor: number = 0,
   ) {
     this.venue = venue;
     this.selectedSeatIds = selectedSeatIds;
     this.activeGroupId = activeGroupId;
     this.selectionMode = selectionMode;
+    this.activeFloor = activeFloor;
   }
 }
