@@ -4,10 +4,10 @@ import { generateAnfiteatro } from "./anfiteatro-generator";
 import { generatePalcoBajo, generatePalcoAlto } from "./palcos-generator";
 
 /**
- * Static configuration details of the ULL Paraninfo venue.
+ * Static configuration details of the ULL Auditorium venue.
  */
 export const ULLAuditoriumVenue: VenueDefinition = {
-  id: "paraninfo_ull",
+  id: "auditorium_ull",
   name: "Paraninfo de la Universidad de La Laguna",
   sections: [
     {

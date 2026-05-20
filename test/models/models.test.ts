@@ -73,9 +73,9 @@ describe("Venue and Seating Grouping Logic", (): void => {
 });
 
 describe("Venue Definition Loader & VenueSerializer", (): void => {
-  it("should load the Paraninfo venue and serialize/deserialize symmetrically", (): void => {
-    const venue = VenueDefinitionLoader.loadParaninfo();
-    expect(venue.id).toBe("paraninfo_ull");
+  it("should load the Auditorium venue and serialize/deserialize symmetrically", (): void => {
+    const venue = VenueDefinitionLoader.loadAuditorium();
+    expect(venue.id).toBe("auditorium_ull");
     expect(venue.name).toContain("Universidad de La Laguna");
 
     const group1 = new SeatGroup("g1", "VIP", "#FFD700");
@@ -90,12 +90,12 @@ describe("Venue Definition Loader & VenueSerializer", (): void => {
       venue.assignSeatsToGroup([seatId1, seatId2], "g1");
 
       const serialized = VenueSerializer.toJSON(venue);
-      expect(serialized.id).toBe("paraninfo_ull");
+      expect(serialized.id).toBe("auditorium_ull");
       expect(serialized.groups).toHaveLength(1);
       expect(serialized.groups[0]?.seatIds).toEqual([seatId1, seatId2]);
 
       const deserialized = VenueSerializer.fromJSON(serialized);
-      expect(deserialized.id).toBe("paraninfo_ull");
+      expect(deserialized.id).toBe("auditorium_ull");
       expect(deserialized.groups).toHaveLength(1);
       expect(deserialized.groups[0]?.label).toBe("VIP");
 
@@ -108,7 +108,7 @@ describe("Venue Definition Loader & VenueSerializer", (): void => {
 
 describe("AppState Model", (): void => {
   it("should construct and hold reference variables", (): void => {
-    const venue = VenueDefinitionLoader.loadParaninfo();
+    const venue = VenueDefinitionLoader.loadAuditorium();
     const appState = new AppState(venue, ["s1"], "g1", SelectionMode.DRAG);
     expect(appState.venue).toBe(venue);
     expect(appState.selectedSeatIds).toEqual(["s1"]);

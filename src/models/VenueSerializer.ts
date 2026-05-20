@@ -35,11 +35,11 @@ export class VenueSerializer {
    * @returns A Venue instance reconstructed with the state from JSON.
    */
   public static fromJSON(data: VenueJSON): Venue {
-    if (data.id !== "paraninfo_ull") {
+    if (data.id !== "auditorium_ull") {
       throw new Error(`Unsupported venue ID: ${data.id}`);
     }
 
-    const venue = VenueDefinitionLoader.loadParaninfo();
+    const venue = VenueDefinitionLoader.loadAuditorium();
 
     for (const groupData of data.groups) {
       const group = new SeatGroup(
