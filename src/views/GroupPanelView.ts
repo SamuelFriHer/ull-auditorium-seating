@@ -1,0 +1,218 @@
+import type { AppState } from "../models/AppState";
+import type { SeatGroup } from "../models/SeatGroup";
+import type { EventBus } from "../events/EventBus";
+import { ColorUtils } from "../utils/ColorUtils";
+import type { IView } from "./IView";
+
+/**
+ * Handles rendering the sidebar panel to manage and assign seat groups.
+ */
+export class GroupPanelView implements IView {
+  private readonly container: HTMLElement;
+  private readonly state: AppState;
+  private readonly eventBus: EventBus;
+
+  private readonly onVenueUpdated: () => void;
+  private readonly onVenueLoaded: () => void;
+  private readonly onActiveGroupChanged: (payload: {
+    id: string | null;
+  }) => void;
+
+  /**
+   * Initializes a new GroupPanelView instance.
+   *
+   * @param container - The sidebar container DOM element.
+   * @param state - The global application state.
+   * @param eventBus - The application event bus.
+   */
+  constructor(container: HTMLElement, state: AppState, eventBus: EventBus) {
+    this.container = container;
+    this.state = state;
+    this.eventBus = eventBus;
+
+    this.onVenueUpdated = () => this.render();
+    this.onVenueLoaded = () => this.render();
+    this.onActiveGroupChanged = (payload): void =>
+      this.setActiveGroup(payload.id);
+
+    this.bindEvents();
+  }
+
+  /**
+   * Renders the sidebar form, headers, and list of seat groups.
+   */
+  public render(): void {
+    this.container.innerHTML = `
+      <div class="group-panel-header">
+        <h2>Gestión de Grupos</h2>
+      </div>
+      
+      <form id="create-group-form" class="create-group-form">
+        <div class="form-group">
+          <input type="text" id="group-name-input" placeholder="Nuevo grupo..." required />
+          <input type="color" id="group-color-input" value="${this.getNextColor()}" title="Color del grupo" />
+        </div>
+        <button type="submit" class="btn-create-group">Crear Grupo</button>
+      </form>
+
+      <div class="groups-list" id="groups-list"></div>
+    `;
+
+    this.attachFormEvents();
+
+    for (const group of this.state.venue.groups) {
+      this.renderGroup(group);
+    }
+  }
+
+  /**
+   * Appends and renders a single seat group item to the sidebar list.
+   *
+   * @param group - The SeatGroup model to render.
+   */
+  public renderGroup(group: SeatGroup): void {
+    const listContainer = this.container.querySelector("#groups-list");
+    if (!listContainer) {
+      return;
+    }
+
+    const groupItem = document.createElement("div");
+    this.initGroupItem(groupItem, group);
+
+    this.attachGroupItemEvents(groupItem, group);
+
+    listContainer.appendChild(groupItem);
+  }
+
+  /**
+   * Updates selection styling on the group list elements.
+   *
+   * @param id - The active group ID, or null.
+   */
+  public setActiveGroup(id: string | null): void {
+    this.state.activeGroupId = id;
+    const items = this.container.querySelectorAll(".group-item");
+    items.forEach((item): void => {
+      const groupId = item.getAttribute("data-group-id");
+      if (groupId === id) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+  }
+
+  /**
+   * Cleans up event listeners and panel contents.
+   */
+  public destroy(): void {
+    this.eventBus.off("venue:updated", this.onVenueUpdated);
+    this.eventBus.off("venue:loaded", this.onVenueLoaded);
+    this.eventBus.off("group:active-change", this.onActiveGroupChanged);
+    this.container.innerHTML = "";
+  }
+
+  /**
+   * Registers event handlers on the event bus.
+   */
+  private bindEvents(): void {
+    this.eventBus.on("venue:updated", this.onVenueUpdated);
+    this.eventBus.on("venue:loaded", this.onVenueLoaded);
+    this.eventBus.on("group:active-change", this.onActiveGroupChanged);
+  }
+
+  /**
+   * Resolves the next default color for a new group based on existing groups.
+   */
+  private getNextColor(): string {
+    return ColorUtils.generateColor(this.state.venue.groups.length);
+  }
+
+  /**
+   * Attaches submit listener to the group creation form.
+   */
+  private attachFormEvents(): void {
+    const form = this.container.querySelector("#create-group-form");
+    form?.addEventListener("submit", (event: Event): void => {
+      event.preventDefault();
+      const nameInput = this.container.querySelector(
+        "#group-name-input",
+      ) as HTMLInputElement;
+      const colorInput = this.container.querySelector(
+        "#group-color-input",
+      ) as HTMLInputElement;
+      if (nameInput) {
+        const label = nameInput.value.trim();
+        if (label) {
+          const payload: { label: string; color?: string } = { label };
+          if (colorInput && colorInput.value) {
+            payload.color = colorInput.value;
+          }
+          this.eventBus.emit("group:create", payload);
+        }
+      }
+    });
+  }
+
+  /**
+   * Sets initial contents and styling on a group list item.
+   */
+  private initGroupItem(groupItem: HTMLDivElement, group: SeatGroup): void {
+    groupItem.className = "group-item";
+    groupItem.setAttribute("data-group-id", group.id);
+    if (this.state.activeGroupId === group.id) {
+      groupItem.classList.add("active");
+    }
+
+    groupItem.style.borderLeft = `4px solid ${group.color}`;
+    const selectedCount = this.state.selectedSeatIds.length;
+
+    groupItem.innerHTML = `
+      <div class="group-info">
+        <span class="group-label">${group.label}</span>
+        <span class="group-count">${group.seatIds.length} butacas</span>
+      </div>
+      <div class="group-actions">
+        <button class="btn-assign-seats" title="Asignar seleccionados" ${selectedCount === 0 ? "disabled" : ""}>
+          Asignar
+        </button>
+        <button class="btn-delete-group" title="Eliminar grupo">
+          &times;
+        </button>
+      </div>
+    `;
+  }
+
+  /**
+   * Attaches interaction event listeners to a group list item.
+   */
+  private attachGroupItemEvents(
+    groupItem: HTMLDivElement,
+    group: SeatGroup,
+  ): void {
+    groupItem
+      .querySelector(".group-info")
+      ?.addEventListener("click", (): void => {
+        const nextActiveId =
+          this.state.activeGroupId === group.id ? null : group.id;
+        this.eventBus.emit("group:active-change", { id: nextActiveId });
+      });
+
+    groupItem
+      .querySelector(".btn-assign-seats")
+      ?.addEventListener("click", (event: Event): void => {
+        event.stopPropagation();
+        this.eventBus.emit("group:assign", {
+          seatIds: [...this.state.selectedSeatIds],
+          groupId: group.id,
+        });
+      });
+
+    groupItem
+      .querySelector(".btn-delete-group")
+      ?.addEventListener("click", (event: Event): void => {
+        event.stopPropagation();
+        this.eventBus.emit("group:delete", { id: group.id });
+      });
+  }
+}
