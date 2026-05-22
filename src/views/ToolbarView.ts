@@ -26,7 +26,10 @@ export class ToolbarView implements IView {
     this.eventBus = eventBus;
 
     this.onVenueUpdated = () => this.render();
-    this.onFloorChanged = (): void => this.render();
+    this.onFloorChanged = (payload: { floor: number }): void => {
+      this.state.activeFloor = payload.floor;
+      this.render();
+    };
 
     this.bindEvents();
   }
