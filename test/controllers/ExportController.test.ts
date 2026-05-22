@@ -15,14 +15,14 @@ class MockFileReader {
   public onerror: (() => void) | null = null;
   public error: Error | null = null;
 
-  public readAsText(file: any): void {
+  public readAsText(file: { shouldFail?: boolean; content?: string }): void {
     if (file.shouldFail) {
       if (this.onerror) {
         this.error = new Error("Mock read error");
         this.onerror();
       }
     } else {
-      this.result = file.content;
+      this.result = file.content ?? "";
       if (this.onload) {
         this.onload();
       }

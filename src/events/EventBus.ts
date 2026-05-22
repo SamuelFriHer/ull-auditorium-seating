@@ -4,7 +4,7 @@ import type { AppEvent, EventPayloadMap } from "../types";
  * A typed event bus implementing the Publish-Subscribe pattern to decouple components.
  */
 export class EventBus {
-  private readonly listeners: Map<AppEvent, Array<(payload: any) => void>>;
+  private readonly listeners: Map<AppEvent, Array<(payload: never) => void>>;
 
   /**
    * Initializes a new EventBus instance.
@@ -26,7 +26,7 @@ export class EventBus {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
-    this.listeners.get(event)!.push(listener);
+    this.listeners.get(event)!.push(listener as (payload: never) => void);
   }
 
   /**
@@ -43,7 +43,9 @@ export class EventBus {
     if (!registeredListeners) {
       return;
     }
-    const listenerIndex = registeredListeners.indexOf(listener);
+    const listenerIndex = registeredListeners.indexOf(
+      listener as (payload: never) => void,
+    );
     if (listenerIndex !== -1) {
       registeredListeners.splice(listenerIndex, 1);
     }
@@ -67,7 +69,7 @@ export class EventBus {
     }
     const payload = args[0];
     for (const listener of registeredListeners) {
-      listener(payload);
+      listener(payload as never);
     }
   }
 }

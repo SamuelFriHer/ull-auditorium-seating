@@ -26,7 +26,14 @@ describe("AppController", (): void => {
   it("should initialize and construct internal MVC structures", (): void => {
     expect(controller).toBeDefined();
 
-    const internalObj = controller as any;
+    const internalObj = controller as unknown as {
+      eventBus: unknown;
+      state: unknown;
+      selectionController: SelectionController;
+      groupController: GroupController;
+      exportController: ExportController;
+      appView: unknown;
+    };
     expect(internalObj.eventBus).toBeDefined();
     expect(internalObj.state).toBeDefined();
     expect(internalObj.selectionController).toBeInstanceOf(SelectionController);
@@ -36,7 +43,9 @@ describe("AppController", (): void => {
   });
 
   it("should trigger view rendering when init is called", (): void => {
-    const internalObj = controller as any;
+    const internalObj = controller as unknown as {
+      appView: { render: () => void };
+    };
     const renderSpy = vi.spyOn(internalObj.appView, "render");
 
     controller.init();
