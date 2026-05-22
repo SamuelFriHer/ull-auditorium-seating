@@ -3,6 +3,10 @@ import type { Section } from "../models/Section";
 import type { EventBus } from "../events/EventBus";
 import { SectionView } from "./SectionView";
 import type { IView } from "./IView";
+import {
+  getSectionIdsForFloor,
+  calculateVenueViewBox,
+} from "../utils/LayoutUtils";
 
 /**
  * Renders the entire auditorium seating map based on the active floor.
@@ -30,8 +34,8 @@ export class VenueView implements IView {
     this.eventBus = eventBus;
     this.sectionViews = new Map();
 
-    this.onVenueUpdated = () => this.updateSeatStates();
-    this.onVenueLoaded = () => this.render();
+    this.onVenueUpdated = (): void => this.updateSeatStates();
+    this.onVenueLoaded = (): void => this.render();
     this.onFloorChanged = (payload: { floor: number }): void => {
       this.state.activeFloor = payload.floor;
       this.render();
@@ -50,12 +54,20 @@ export class VenueView implements IView {
     }
     this.sectionViews.clear();
 
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 1050 720");
+    const activeSections: Section[] = this.getSectionsForFloor(
+      this.state.activeFloor,
+    );
+    const svg: SVGElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg",
+    );
+    svg.setAttribute(
+      "viewBox",
+      calculateVenueViewBox(this.state.venue.sections),
+    );
     svg.setAttribute("class", "venue-svg");
     this.container.appendChild(svg);
 
-    const activeSections = this.getSectionsForFloor(this.state.activeFloor);
     for (const section of activeSections) {
       const sectionView = new SectionView(section, svg, this.eventBus);
       sectionView.render();
@@ -103,8 +115,10 @@ export class VenueView implements IView {
    * Synchronizes select and color states on all rendered seat elements.
    */
   private updateSeatStates(): void {
-    const selectedSet = new Set(this.state.selectedSeatIds);
-    const activeSections = this.getSectionsForFloor(this.state.activeFloor);
+    const selectedSet: Set<string> = new Set(this.state.selectedSeatIds);
+    const activeSections: Section[] = this.getSectionsForFloor(
+      this.state.activeFloor,
+    );
 
     for (const section of activeSections) {
       const sectionView = this.sectionViews.get(section.id);
@@ -120,7 +134,7 @@ export class VenueView implements IView {
 
         seatView.setSelected(selectedSet.has(seat.id));
 
-        const groupColor = seat.groupId
+        const groupColor: string | null = seat.groupId
           ? this.state.venue.getGroup(seat.groupId)?.color || null
           : null;
         seatView.setGroupColor(groupColor);
@@ -132,25 +146,9 @@ export class VenueView implements IView {
    * Resolves the list of Section models visible for a given floor.
    */
   private getSectionsForFloor(floor: number): Section[] {
-    const floorSectionIds = this.getSectionIdsForFloor(floor);
+    const floorSectionIds: string[] = getSectionIdsForFloor(floor);
     return this.state.venue.sections.filter((sec: Section): boolean =>
       floorSectionIds.includes(sec.id),
     );
-  }
-
-  /**
-   * Resolves the list of Section IDs assigned to a given floor level.
-   */
-  private getSectionIdsForFloor(floor: number): string[] {
-    switch (floor) {
-      case 0:
-        return ["patio_butacas"];
-      case 1:
-        return ["anfiteatro", "palco_bajo"];
-      case 2:
-        return ["palco_alto"];
-      default:
-        return [];
-    }
   }
 }
