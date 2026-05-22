@@ -1,6 +1,6 @@
 {
   "name": "ull-auditorium-seating",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interactive tool for assigning seating groups in the ULL Auditorium",
   "repository": {
     "type": "git",
