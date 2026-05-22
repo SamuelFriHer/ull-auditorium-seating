@@ -12,9 +12,9 @@ const ANFITEATRO_ROWS: string[] = ["H", "G", "F", "E", "D", "C", "B", "A"];
  */
 function calculateAnfiteatroY(rowName: string): number {
   const rowIndex: number = ANFITEATRO_ROWS.indexOf(rowName);
-  const standardSpacing: number = rowIndex * 20;
-  const corridorAdjustment: number = rowName <= "D" ? 26 : 0;
-  return 180 + standardSpacing + corridorAdjustment;
+  const standardSpacing: number = rowIndex * 28;
+  const corridorAdjustment: number = rowName <= "D" ? 20 : 0;
+  return 202 + standardSpacing + corridorAdjustment;
 }
 
 /**

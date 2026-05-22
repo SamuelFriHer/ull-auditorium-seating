@@ -15,8 +15,8 @@ export function generatePalcoBajo(): SeatDefinition[] {
       id: `palco_bajo-Impar-${oddNumber}`,
       row: "Impar",
       number: oddNumber,
-      x: 930,
-      y: 670 - index * 21,
+      x: 910,
+      y: 670 - index * 28,
     });
 
     const evenNumber: number = 2 * index + 2;
@@ -24,8 +24,8 @@ export function generatePalcoBajo(): SeatDefinition[] {
       id: `palco_bajo-Par-${evenNumber}`,
       row: "Par",
       number: evenNumber,
-      x: 120,
-      y: 670 - index * 21,
+      x: 140,
+      y: 670 - index * 28,
     });
   }
 
@@ -47,8 +47,8 @@ export function generatePalcoAlto(): SeatDefinition[] {
       id: `palco_alto-Impar-${oddNumber}`,
       row: "Impar",
       number: oddNumber,
-      x: 980,
-      y: 670 - index * 17,
+      x: 910,
+      y: 670 - index * 28,
     });
 
     const evenNumber: number = 2 * index + 2;
@@ -56,8 +56,8 @@ export function generatePalcoAlto(): SeatDefinition[] {
       id: `palco_alto-Par-${evenNumber}`,
       row: "Par",
       number: evenNumber,
-      x: 70,
-      y: 670 - index * 17,
+      x: 140,
+      y: 670 - index * 28,
     });
   }
 

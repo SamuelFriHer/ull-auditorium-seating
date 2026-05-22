@@ -31,8 +31,8 @@ const PATIO_ROWS: string[] = [
 function calculatePatioY(rowName: string): number {
   const rowIndex: number = PATIO_ROWS.indexOf(rowName);
   const standardSpacing: number = rowIndex * 28;
-  const corridorAdjustment: number = rowName <= "L" ? 40 : 0;
-  return 180 + standardSpacing + corridorAdjustment;
+  const corridorAdjustment: number = rowName <= "L" ? 20 : 0;
+  return 202 + standardSpacing + corridorAdjustment;
 }
 
 /**
