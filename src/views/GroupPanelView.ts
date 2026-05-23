@@ -49,13 +49,15 @@ export class GroupPanelView implements IView {
       
       <form id="create-group-form" class="create-group-form">
         <div class="form-group">
-          <input type="text" id="group-name-input" placeholder="Nuevo grupo..." required />
-          <input type="color" id="group-color-input" value="${this.getNextColor()}" title="Color del grupo" />
+          <input type="text" id="group-name-input" placeholder="Nuevo grupo..." aria-label="Nombre del nuevo grupo" required />
+          <input type="color" id="group-color-input" value="${this.getNextColor()}" title="Color del grupo" aria-label="Color del nuevo grupo" />
         </div>
         <button type="submit" class="btn-create-group">Crear Grupo</button>
       </form>
 
-      <div class="groups-list" id="groups-list"></div>
+      <div class="groups-list" id="groups-list">
+        ${this.state.venue.groups.length === 0 ? '<div class="empty-state" style="text-align: center; padding: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">No hay grupos creados. Crea uno para empezar.</div>' : ""}
+      </div>
     `;
 
     this.attachFormEvents();
@@ -176,7 +178,7 @@ export class GroupPanelView implements IView {
         <button class="btn-assign-seats" title="Asignar seleccionados" ${selectedCount === 0 ? "disabled" : ""}>
           Asignar
         </button>
-        <button class="btn-delete-group" title="Eliminar grupo">
+        <button class="btn-delete-group" title="Eliminar grupo" aria-label="Eliminar grupo">
           &times;
         </button>
       </div>
