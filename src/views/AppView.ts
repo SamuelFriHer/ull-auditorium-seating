@@ -3,6 +3,7 @@ import type { EventBus } from "../events/EventBus";
 import { ToolbarView } from "./ToolbarView";
 import { VenueView } from "./VenueView";
 import { GroupPanelView } from "./GroupPanelView";
+import { FooterView } from "./FooterView";
 import type { IView } from "./IView";
 
 /**
@@ -16,6 +17,7 @@ export class AppView implements IView {
   private toolbarView: ToolbarView | undefined;
   private venueView: VenueView | undefined;
   private groupPanelView: GroupPanelView | undefined;
+  private footerView: FooterView | undefined;
 
   /**
    * Initializes a new AppView instance.
@@ -41,6 +43,7 @@ export class AppView implements IView {
           <div class="app-venue-container" id="app-venue-container"></div>
           <aside class="app-sidebar" id="app-sidebar-container"></aside>
         </div>
+        <footer class="app-footer" id="app-footer-container"></footer>
       </div>
     `;
 
@@ -52,6 +55,9 @@ export class AppView implements IView {
     ) as HTMLElement;
     const sidebarContainer = this.container.querySelector(
       "#app-sidebar-container",
+    ) as HTMLElement;
+    const footerContainer = this.container.querySelector(
+      "#app-footer-container",
     ) as HTMLElement;
 
     this.toolbarView = new ToolbarView(
@@ -65,10 +71,12 @@ export class AppView implements IView {
       this.state,
       this.eventBus,
     );
+    this.footerView = new FooterView(footerContainer);
 
     this.toolbarView.render();
     this.venueView.render();
     this.groupPanelView.render();
+    this.footerView.render();
   }
 
   /**
@@ -99,10 +107,12 @@ export class AppView implements IView {
     this.toolbarView?.destroy();
     this.venueView?.destroy();
     this.groupPanelView?.destroy();
+    this.footerView?.destroy();
 
     this.toolbarView = undefined;
     this.venueView = undefined;
     this.groupPanelView = undefined;
+    this.footerView = undefined;
 
     this.container.innerHTML = "";
   }
