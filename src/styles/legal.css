@@ -1,0 +1,49 @@
+:root {
+  --bg-primary: hsl(222, 25%, 10%);
+  --text-primary: hsl(210, 40%, 98%);
+  --text-secondary: hsl(215, 20%, 75%);
+  --color-primary: hsl(263, 70%, 50%);
+  --font-family:
+    "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+body {
+  font-family: var(--font-family);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+.container {
+  background: hsla(222, 25%, 14%, 0.7);
+  padding: 2.5rem;
+  border-radius: 12px;
+  border: 1px solid hsla(222, 25%, 25%, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+.back-link {
+  display: inline-block;
+  margin-top: 2rem;
+}
