@@ -11,7 +11,7 @@
     "moduleResolution": "bundler",
     "target": "esnext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["vite/client"],
+    "types": ["astro/client"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -40,9 +40,10 @@
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "vite.config.ts"]
+  "include": ["src/**/*"]
 }

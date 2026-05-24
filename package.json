@@ -1,6 +1,6 @@
 {
   "name": "ull-auditorium-seating",
-  "version": "1.0.3",
+  "version": "2026.5.3",
   "description": "Interactive tool for assigning seating groups in the ULL Auditorium",
   "repository": {
     "type": "git",
@@ -14,14 +14,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "build": "tsc && astro build",
+    "dev": "astro dev",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "lint": "eslint .",
+    "preview": "astro preview",
+    "test": "vitest"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -32,7 +30,9 @@
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",
-    "vite": "^8.0.13",
     "vitest": "^4.1.7"
+  },
+  "dependencies": {
+    "astro": "^6.3.7"
   }
 }

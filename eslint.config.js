@@ -6,7 +6,7 @@ import globals from "globals";
 export default tseslint.config(
   {
     // Ignore build output and other non-source directories
-    ignores: ["dist/**", "node_modules/**", "coverage/**"],
+    ignores: [".astro/**", "dist/**", "node_modules/**"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
