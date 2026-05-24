@@ -1,8 +1,8 @@
 # ULL Auditorium Seating
 
-An interactive web application for assigning seating groups in the Auditorium of the Universidad de La Laguna (Paraninfo de la ULL). Built with TypeScript and Vite, this tool uses a custom SVG-based interactive map and is deployed automatically to GitHub Pages.
+An interactive web application for assigning seating groups in the Auditorium of the Universidad de La Laguna (Paraninfo de la ULL). Built with Astro and TypeScript, this tool uses a custom SVG-based interactive map and is deployed automatically to GitHub Pages.
 
-No external UI frameworks or libraries are used; the application relies entirely on vanilla TypeScript and DOM/SVG API interactions.
+No external UI frameworks or libraries (such as React or Vue) are used; the application relies entirely on vanilla TypeScript and DOM/SVG API interactions. Astro is utilized as the static site generator, router, and build tool.
 
 ---
 
@@ -13,6 +13,7 @@ No external UI frameworks or libraries are used; the application relies entirely
 - **Advanced Selection Modes**: Supports both individual seat clicking and drag-selection (by dragging pointer across multiple seats).
 - **Export and Import**: Save and load complete seating arrangements via JSON files.
 - **Fully Decoupled Architecture**: View and Controller layers are completely separated through a typed Event Bus system.
+- **Legal Disclaimer & Versioning**: A footer component dynamically displays the current application version (from `package.json`) and links to a legal/non-commercial disclaimer page.
 - **Production-Ready CI/CD**: Automated deployment to GitHub Pages via GitHub Actions.
 
 ---
@@ -41,7 +42,7 @@ Run the local development server:
 npm run dev
 ```
 
-The application will be accessible at `http://localhost:5173`.
+The application will be accessible at `http://localhost:4321`.
 
 ### Running Tests
 
