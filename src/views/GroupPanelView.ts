@@ -175,7 +175,7 @@ export class GroupPanelView implements IView {
         <span class="group-count">${group.seatIds.length} butacas</span>
       </div>
       <div class="group-actions">
-        <button class="btn-assign-seats" title="Asignar seleccionados" ${selectedCount === 0 ? "disabled" : ""}>
+        <button class="btn-assign-seats" title="${selectedCount === 0 ? "Selecciona butacas primero" : "Asignar seleccionados"}" ${selectedCount === 0 ? "disabled" : ""}>
           Asignar
         </button>
         <button class="btn-delete-group" title="Eliminar grupo" aria-label="Eliminar grupo">
