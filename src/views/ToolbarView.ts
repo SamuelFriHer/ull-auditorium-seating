@@ -43,16 +43,16 @@ export class ToolbarView implements IView {
       <div class="toolbar-left">
         <span class="app-logo">🎟️ Paraninfo Seating</span>
         <div class="floor-selector" id="floor-selector">
-          <button class="btn-floor ${this.state.activeFloor === 0 ? "active" : ""}" data-floor="0">P0 (Patio)</button>
-          <button class="btn-floor ${this.state.activeFloor === 1 ? "active" : ""}" data-floor="1">P1 (Anfiteatro + P. Bajo)</button>
-          <button class="btn-floor ${this.state.activeFloor === 2 ? "active" : ""}" data-floor="2">P2 (Palco Alto)</button>
+          <button class="btn-floor ${this.state.activeFloor === 0 ? "active" : ""}" data-floor="0" aria-pressed="${this.state.activeFloor === 0 ? "true" : "false"}">P0 (Patio)</button>
+          <button class="btn-floor ${this.state.activeFloor === 1 ? "active" : ""}" data-floor="1" aria-pressed="${this.state.activeFloor === 1 ? "true" : "false"}">P1 (Anfiteatro + P. Bajo)</button>
+          <button class="btn-floor ${this.state.activeFloor === 2 ? "active" : ""}" data-floor="2" aria-pressed="${this.state.activeFloor === 2 ? "true" : "false"}">P2 (Palco Alto)</button>
         </div>
       </div>
       <div class="toolbar-actions">
-        <button id="btn-clear-selection" class="btn-secondary" ${selectedCount === 0 ? "disabled" : ""}>
+        <button id="btn-clear-selection" class="btn-secondary" ${selectedCount === 0 ? "disabled" : ""} title="${selectedCount === 0 ? "Selecciona butacas primero" : "Limpiar selección"}">
           Limpiar Selección (${selectedCount})
         </button>
-        <button id="btn-unassign-seats" class="btn-secondary" ${selectedCount === 0 ? "disabled" : ""}>
+        <button id="btn-unassign-seats" class="btn-secondary" ${selectedCount === 0 ? "disabled" : ""} title="${selectedCount === 0 ? "Selecciona butacas primero" : "Desasignar butacas seleccionadas"}">
           Desasignar
         </button>
         <button id="btn-export-layout" class="btn-primary">
