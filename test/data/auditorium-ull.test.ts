@@ -117,4 +117,63 @@ describe("ULL Auditorium Seating Layout Definition", (): void => {
       expect(seat.number % 2).not.toBe(0);
     });
   });
+
+  it("should apply correct offset shifts to patio rows to center them", (): void => {
+    const patio: SectionDefinition | undefined = ULLAuditoriumVenue.sections[0];
+    expect(patio).toBeDefined();
+    if (!patio) {
+      return;
+    }
+
+    const rowASeats: SeatDefinition[] = patio.seats.filter(
+      (seat: SeatDefinition): boolean => seat.row === "A",
+    );
+    expect(rowASeats).toHaveLength(14);
+
+    const seatA1: SeatDefinition | undefined = rowASeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 1,
+    );
+    expect(seatA1).toBeDefined();
+    expect(seatA1?.x).toBe(620);
+
+    const seatA2: SeatDefinition | undefined = rowASeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 2,
+    );
+    expect(seatA2).toBeDefined();
+    expect(seatA2?.x).toBe(430);
+
+    const rowBSeats: SeatDefinition[] = patio.seats.filter(
+      (seat: SeatDefinition): boolean => seat.row === "B",
+    );
+    expect(rowBSeats).toHaveLength(22);
+
+    const seatB1: SeatDefinition | undefined = rowBSeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 1,
+    );
+    expect(seatB1).toBeDefined();
+    expect(seatB1?.x).toBe(564);
+
+    const seatB2: SeatDefinition | undefined = rowBSeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 2,
+    );
+    expect(seatB2).toBeDefined();
+    expect(seatB2?.x).toBe(486);
+
+    const rowCSeats: SeatDefinition[] = patio.seats.filter(
+      (seat: SeatDefinition): boolean => seat.row === "C",
+    );
+    expect(rowCSeats).toHaveLength(24);
+
+    const seatC1: SeatDefinition | undefined = rowCSeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 1,
+    );
+    expect(seatC1).toBeDefined();
+    expect(seatC1?.x).toBe(550);
+
+    const seatC2: SeatDefinition | undefined = rowCSeats.find(
+      (seat: SeatDefinition): boolean => seat.number === 2,
+    );
+    expect(seatC2).toBeDefined();
+    expect(seatC2?.x).toBe(500);
+  });
 });

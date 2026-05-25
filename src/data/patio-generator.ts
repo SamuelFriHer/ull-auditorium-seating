@@ -40,16 +40,20 @@ function calculatePatioY(rowName: string): number {
  *
  * @param rowName - The row label.
  * @param seatCount - Total number of seats in the row.
+ * @param maxSeatCount - Maximum number of seats in any row of this section.
  * @param yCoord - The Y coordinate of the row.
  * @returns Array of seat definitions.
  */
 function generateRowSeats(
   rowName: string,
   seatCount: number,
+  maxSeatCount: number,
   yCoord: number,
 ): SeatDefinition[] {
   const seats: SeatDefinition[] = [];
   const halfCount: number = seatCount / 2;
+  const seatWidth: number = 28;
+  const xOffset: number = ((maxSeatCount - seatCount) * seatWidth) / 4;
 
   for (let index: number = 0; index < halfCount; index++) {
     const oddNumber: number = 2 * index + 1;
@@ -57,7 +61,7 @@ function generateRowSeats(
       id: `patio_butacas-${rowName}-${oddNumber}`,
       row: rowName,
       number: oddNumber,
-      x: 550 + index * 28,
+      x: 550 + index * seatWidth + xOffset,
       y: yCoord,
     });
 
@@ -66,7 +70,7 @@ function generateRowSeats(
       id: `patio_butacas-${rowName}-${evenNumber}`,
       row: rowName,
       number: evenNumber,
-      x: 500 - index * 28,
+      x: 500 - index * seatWidth - xOffset,
       y: yCoord,
     });
   }
@@ -84,10 +88,15 @@ function generateRowSeats(
 export function generatePatioButacas(): SeatDefinition[] {
   const seats: SeatDefinition[] = [];
 
+  const seatCounts: number[] = PATIO_ROWS.map((rowName: string): number =>
+    rowName === "A" ? 14 : rowName === "B" ? 22 : 24,
+  );
+  const maxSeatCount: number = Math.max(...seatCounts);
+
   PATIO_ROWS.forEach((rowName: string): void => {
     const seatCount: number = rowName === "A" ? 14 : rowName === "B" ? 22 : 24;
     const yCoord: number = calculatePatioY(rowName);
-    seats.push(...generateRowSeats(rowName, seatCount, yCoord));
+    seats.push(...generateRowSeats(rowName, seatCount, maxSeatCount, yCoord));
   });
 
   return seats;
