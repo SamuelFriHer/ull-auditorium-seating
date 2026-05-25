@@ -39,16 +39,14 @@ vi.mock("../../src/views/FooterView", () => {
   };
 });
 
-/**
- * Simple mock of a DOM element to allow the View to be instantiated
- * and render to run without a full DOM environment like JSDOM.
- */
 class MockElement {
-  innerHTML: string = "";
-  querySelector = vi.fn().mockImplementation(() => new MockElement());
+  public innerHTML: string = "";
+  public querySelector = vi
+    .fn()
+    .mockImplementation((): MockElement => new MockElement());
 }
 
-describe("AppView", (): void => {
+describe("AppView - ZOMBIES", (): void => {
   let container: HTMLElement;
   let state: AppState;
   let eventBus: EventBus;
@@ -62,56 +60,81 @@ describe("AppView", (): void => {
     view = new AppView(container, state, eventBus);
   });
 
-  it("should return null for child views before render", (): void => {
-    expect(view.getToolbarView()).toBeNull();
-    expect(view.getVenueView()).toBeNull();
-    expect(view.getGroupPanelView()).toBeNull();
+  describe("Z - Zero", (): void => {
+    it("should return null for all child views before initial render", (): void => {
+      expect(view.getToolbarView()).toBeNull();
+      expect(view.getVenueView()).toBeNull();
+      expect(view.getGroupPanelView()).toBeNull();
+    });
+
+    it("should reset container innerHTML to empty on destroy", (): void => {
+      view.render();
+      view.destroy();
+      expect(container.innerHTML).toBe("");
+    });
   });
 
-  it("should render child views and expose them via getters", (): void => {
-    view.render();
-
-    // Verify DOM structure
-    expect(container.innerHTML).toContain("app-layout");
-    expect(container.innerHTML).toContain("app-toolbar-container");
-    expect(container.innerHTML).toContain("app-venue-container");
-    expect(container.innerHTML).toContain("app-sidebar-container");
-    expect(container.innerHTML).toContain("app-footer-container");
-
-    // Verify getters
-    const toolbar = view.getToolbarView();
-    const venue = view.getVenueView();
-    const groupPanel = view.getGroupPanelView();
-
-    expect(toolbar).not.toBeNull();
-    expect(venue).not.toBeNull();
-    expect(groupPanel).not.toBeNull();
-
-    // Verify render was called on children
-    expect(toolbar?.render).toHaveBeenCalled();
-    expect(venue?.render).toHaveBeenCalled();
-    expect(groupPanel?.render).toHaveBeenCalled();
-    // (FooterView render is also called but not exposed via getter in AppView,
-    // so we can't easily assert on it without importing the mock class itself,
-    // but verifying the structure and other views is sufficient for coverage).
+  describe("O - One", (): void => {
+    it("should instantiate child views on render", (): void => {
+      view.render();
+      expect(view.getToolbarView()).not.toBeNull();
+      expect(view.getVenueView()).not.toBeNull();
+      expect(view.getGroupPanelView()).not.toBeNull();
+    });
   });
 
-  it("should call destroy on child views and clear container", (): void => {
-    view.render();
+  describe("M - Many", (): void => {
+    it("should inject layout divs and render child views", (): void => {
+      view.render();
+      expect(container.innerHTML).toContain("app-layout");
+      expect(container.innerHTML).toContain("app-toolbar-container");
+      expect(container.innerHTML).toContain("app-venue-container");
+      expect(container.innerHTML).toContain("app-sidebar-container");
+      expect(container.innerHTML).toContain("app-footer-container");
 
-    const toolbar = view.getToolbarView();
-    const venue = view.getVenueView();
-    const groupPanel = view.getGroupPanelView();
+      expect(view.getToolbarView()?.render).toHaveBeenCalled();
+      expect(view.getVenueView()?.render).toHaveBeenCalled();
+      expect(view.getGroupPanelView()?.render).toHaveBeenCalled();
+    });
+  });
 
-    view.destroy();
+  describe("B - Boundary", (): void => {
+    it("should clean references to null after calling destroy", (): void => {
+      view.render();
+      view.destroy();
+      expect(view.getToolbarView()).toBeNull();
+      expect(view.getVenueView()).toBeNull();
+      expect(view.getGroupPanelView()).toBeNull();
+    });
+  });
 
-    expect(toolbar?.destroy).toHaveBeenCalled();
-    expect(venue?.destroy).toHaveBeenCalled();
-    expect(groupPanel?.destroy).toHaveBeenCalled();
+  describe("I - Interface", (): void => {
+    it("should export required methods and getters of view structure", (): void => {
+      expect(typeof view.render).toBe("function");
+      expect(typeof view.destroy).toBe("function");
+      expect(typeof view.getToolbarView).toBe("function");
+    });
+  });
 
-    expect(container.innerHTML).toBe("");
-    expect(view.getToolbarView()).toBeNull();
-    expect(view.getVenueView()).toBeNull();
-    expect(view.getGroupPanelView()).toBeNull();
+  describe("E - Exceptional", (): void => {
+    it("should handle calling destroy on an unrendered view safely", (): void => {
+      expect((): void => {
+        view.destroy();
+      }).not.toThrow();
+    });
+  });
+
+  describe("S - Simple", (): void => {
+    it("should call destroy on instantiated child views", (): void => {
+      view.render();
+      const toolbar = view.getToolbarView();
+      const venue = view.getVenueView();
+      const groupPanel = view.getGroupPanelView();
+
+      view.destroy();
+      expect(toolbar?.destroy).toHaveBeenCalled();
+      expect(venue?.destroy).toHaveBeenCalled();
+      expect(groupPanel?.destroy).toHaveBeenCalled();
+    });
   });
 });

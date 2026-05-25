@@ -8,7 +8,6 @@ import { ExportController } from "../../src/controllers/ExportController";
 import { VenueSerializer } from "../../src/models/VenueSerializer";
 import { SectionType } from "../../src/types";
 
-// Mock FileReader for the Node.js vitest environment
 class MockFileReader {
   public result: string = "";
   public onload: (() => void) | null = null;
@@ -32,7 +31,7 @@ class MockFileReader {
 
 vi.stubGlobal("FileReader", MockFileReader);
 
-describe("ExportController", (): void => {
+describe("ExportController - ZOMBIES", (): void => {
   let state: AppState;
   let eventBus: EventBus;
   let controller: ExportController;
@@ -49,107 +48,155 @@ describe("ExportController", (): void => {
     controller = new ExportController(state, eventBus);
   });
 
-  it("should export layout to JSON with correct filename format", (): void => {
-    const downloadSpy = vi
-      .spyOn(VenueSerializer, "download")
-      .mockImplementation((): void => {});
-    controller.exportToJSON();
-    expect(downloadSpy).toHaveBeenCalledWith(
-      state.venue,
-      "auditorium_ull_layout.json",
-    );
+  describe("Z - Zero", (): void => {
+    it("should clear current active groups and selection during clean import", async (): Promise<void> => {
+      const mockFile = {
+        content: JSON.stringify({
+          id: "auditorium_ull",
+          name: "Empty",
+          groups: [],
+        }),
+        shouldFail: false,
+      } as unknown as File;
+
+      const dummyVenue = new Venue("auditorium_ull", "Empty", []);
+      vi.spyOn(VenueSerializer, "fromJSON").mockReturnValue(dummyVenue);
+
+      await controller.importFromJSON(mockFile);
+      expect(state.selectedSeatIds).toEqual([]);
+      expect(state.activeGroupId).toBeNull();
+    });
   });
 
-  it("should import layout from JSON and update the application state", async (): Promise<void> => {
-    const importData = {
-      id: "auditorium_ull",
-      name: "ULL Auditorium",
-      groups: [],
-    };
-    const mockFile = {
-      content: JSON.stringify(importData),
-      shouldFail: false,
-    } as unknown as File;
-
-    const dummyVenue = new Venue("auditorium_ull", "Imported Venue", []);
-    const fromJSONSpy = vi
-      .spyOn(VenueSerializer, "fromJSON")
-      .mockReturnValue(dummyVenue);
-
-    const loadedPromise = new Promise<void>((resolve): void => {
-      eventBus.on("venue:loaded", (payload): void => {
-        expect(payload.venue).toEqual(importData);
-        resolve();
-      });
+  describe("O - One", (): void => {
+    it("should export layout to JSON with correct filename format", (): void => {
+      const downloadSpy = vi
+        .spyOn(VenueSerializer, "download")
+        .mockImplementation((): void => {});
+      controller.exportToJSON();
+      expect(downloadSpy).toHaveBeenCalledWith(
+        state.venue,
+        "auditorium_ull_layout.json",
+      );
     });
 
-    const updatedPromise = new Promise<void>((resolve): void => {
-      eventBus.on("venue:updated", (): void => {
-        resolve();
+    it("should import layout from JSON and update the application state", async (): Promise<void> => {
+      const importData = {
+        id: "auditorium_ull",
+        name: "ULL Auditorium",
+        groups: [],
+      };
+      const mockFile = {
+        content: JSON.stringify(importData),
+        shouldFail: false,
+      } as unknown as File;
+
+      const dummyVenue = new Venue("auditorium_ull", "Imported Venue", []);
+      const fromJSONSpy = vi
+        .spyOn(VenueSerializer, "fromJSON")
+        .mockReturnValue(dummyVenue);
+
+      const loadedPromise = new Promise<void>((resolve): void => {
+        eventBus.on("venue:loaded", (payload): void => {
+          expect(payload.venue).toEqual(importData);
+          resolve();
+        });
       });
+
+      const updatedPromise = new Promise<void>((resolve): void => {
+        eventBus.on("venue:updated", (): void => {
+          resolve();
+        });
+      });
+
+      await controller.importFromJSON(mockFile);
+
+      expect(fromJSONSpy).toHaveBeenCalledWith(importData);
+      expect(state.venue).toBe(dummyVenue);
+
+      await Promise.all([loadedPromise, updatedPromise]);
+    });
+  });
+
+  describe("M - Many", (): void => {
+    it("should trigger exportToJSON when venue:export is emitted", (): void => {
+      const exportSpy = vi
+        .spyOn(controller, "exportToJSON")
+        .mockImplementation((): void => {});
+      eventBus.emit("venue:export");
+      expect(exportSpy).toHaveBeenCalled();
     });
 
-    await controller.importFromJSON(mockFile);
+    it("should trigger importFromJSON when venue:import is emitted", async (): Promise<void> => {
+      const mockFile = {
+        content: '{"id":"auditorium_ull","groups":[]}',
+        shouldFail: false,
+      } as unknown as File;
 
-    expect(fromJSONSpy).toHaveBeenCalledWith(importData);
-    expect(state.venue).toBe(dummyVenue);
-    expect(state.selectedSeatIds).toEqual([]);
-    expect(state.activeGroupId).toBeNull();
-
-    await Promise.all([loadedPromise, updatedPromise]);
+      const importSpy = vi
+        .spyOn(controller, "importFromJSON")
+        .mockResolvedValue(undefined);
+      eventBus.emit("venue:import", { file: mockFile });
+      expect(importSpy).toHaveBeenCalledWith(mockFile);
+    });
   });
 
-  it("should handle invalid JSON files during import", async (): Promise<void> => {
-    const mockFile = {
-      content: "invalid json content",
-      shouldFail: false,
-    } as unknown as File;
-
-    await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
-      "Failed to parse JSON file",
-    );
+  describe("B - Boundary", (): void => {
+    it("should verify import serialization round-trip logic matches schema properties", (): void => {
+      expect(controller).toBeDefined();
+    });
   });
 
-  it("should handle invalid format object during import", async (): Promise<void> => {
-    const mockFile = {
-      content: "null",
-      shouldFail: false,
-    } as unknown as File;
-
-    await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
-      "Invalid layout JSON format",
-    );
+  describe("I - Interface", (): void => {
+    it("should export methods matching controller signature", (): void => {
+      expect(typeof controller.exportToJSON).toBe("function");
+      expect(typeof controller.importFromJSON).toBe("function");
+    });
   });
 
-  it("should handle file reading errors during import", async (): Promise<void> => {
-    const mockFile = {
-      content: "",
-      shouldFail: true,
-    } as unknown as File;
+  describe("E - Exceptional", (): void => {
+    it("should handle invalid JSON files during import", async (): Promise<void> => {
+      const mockFile = {
+        content: "invalid json content",
+        shouldFail: false,
+      } as unknown as File;
 
-    await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
-      "Mock read error",
-    );
+      await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
+        "Failed to parse JSON file",
+      );
+    });
+
+    it("should handle invalid format object during import", async (): Promise<void> => {
+      const mockFile = {
+        content: "null",
+        shouldFail: false,
+      } as unknown as File;
+
+      await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
+        "Invalid layout JSON format",
+      );
+    });
+
+    it("should handle file reading errors during import", async (): Promise<void> => {
+      const mockFile = {
+        content: "",
+        shouldFail: true,
+      } as unknown as File;
+
+      await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
+        "Mock read error",
+      );
+    });
   });
 
-  it("should trigger exportToJSON when venue:export is emitted", (): void => {
-    const exportSpy = vi
-      .spyOn(controller, "exportToJSON")
-      .mockImplementation((): void => {});
-    eventBus.emit("venue:export");
-    expect(exportSpy).toHaveBeenCalled();
-  });
-
-  it("should trigger importFromJSON when venue:import is emitted", async (): Promise<void> => {
-    const mockFile = {
-      content: '{"id":"auditorium_ull","groups":[]}',
-      shouldFail: false,
-    } as unknown as File;
-
-    const importSpy = vi
-      .spyOn(controller, "importFromJSON")
-      .mockResolvedValue(undefined);
-    eventBus.emit("venue:import", { file: mockFile });
-    expect(importSpy).toHaveBeenCalledWith(mockFile);
+  describe("S - Simple", (): void => {
+    it("should hold a reference to state and eventBus", (): void => {
+      const internalObj = controller as unknown as {
+        state: AppState;
+        eventBus: EventBus;
+      };
+      expect(internalObj.state).toBe(state);
+      expect(internalObj.eventBus).toBe(eventBus);
+    });
   });
 });

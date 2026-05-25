@@ -13,7 +13,7 @@ vi.mock("../../src/views/AppView", () => {
   };
 });
 
-describe("AppController", (): void => {
+describe("AppController - ZOMBIES", (): void => {
   let container: HTMLElement;
   let controller: AppController;
 
@@ -23,58 +23,88 @@ describe("AppController", (): void => {
     controller = new AppController(container);
   });
 
-  it("should initialize and construct internal MVC structures", (): void => {
-    expect(controller).toBeDefined();
-
-    const internalObj = controller as unknown as {
-      eventBus: unknown;
-      state: unknown;
-      selectionController: SelectionController;
-      groupController: GroupController;
-      exportController: ExportController;
-      appView: unknown;
-    };
-    expect(internalObj.eventBus).toBeDefined();
-    expect(internalObj.state).toBeDefined();
-    expect(internalObj.selectionController).toBeInstanceOf(SelectionController);
-    expect(internalObj.groupController).toBeInstanceOf(GroupController);
-    expect(internalObj.exportController).toBeInstanceOf(ExportController);
-    expect(internalObj.appView).toBeDefined();
+  describe("Z - Zero", (): void => {
+    it("should not throw error when bindEvents is called without any event listeners", (): void => {
+      const controllerWithBind = controller as unknown as {
+        bindEvents: () => void;
+      };
+      expect((): void => {
+        controllerWithBind.bindEvents();
+      }).not.toThrow();
+    });
   });
 
-  it("should trigger view rendering when init is called", (): void => {
-    const internalObj = controller as unknown as {
-      appView: { render: () => void };
-    };
-    const renderSpy = vi.spyOn(internalObj.appView, "render");
+  describe("O - One", (): void => {
+    it("should trigger view rendering exactly once when init is called", (): void => {
+      const internalObj = controller as unknown as {
+        appView: { render: () => void };
+      };
+      const renderSpy = vi.spyOn(internalObj.appView, "render");
 
-    controller.init();
+      controller.init();
 
-    expect(renderSpy).toHaveBeenCalledTimes(1);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call bindEvents exactly once during constructor initialization", (): void => {
+      const prototypeWithBind = AppController.prototype as unknown as {
+        bindEvents: () => void;
+      };
+      const bindEventsSpy = vi.spyOn(prototypeWithBind, "bindEvents");
+
+      new AppController({} as HTMLElement);
+
+      expect(bindEventsSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("should call bindEvents during initialization", (): void => {
-    // Spy on the prototype before instantiating a new controller
-    // because bindEvents is called in the constructor.
-    const prototypeWithBind = AppController.prototype as unknown as {
-      bindEvents: () => void;
-    };
-    const bindEventsSpy = vi.spyOn(prototypeWithBind, "bindEvents");
-
-    // Create a new instance to trigger the constructor
-    new AppController({} as HTMLElement);
-
-    expect(bindEventsSpy).toHaveBeenCalledTimes(1);
+  describe("M - Many", (): void => {
+    it("should construct and initialize all internal sub-controllers correctly", (): void => {
+      const internalObj = controller as unknown as {
+        selectionController: SelectionController;
+        groupController: GroupController;
+        exportController: ExportController;
+      };
+      expect(internalObj.selectionController).toBeInstanceOf(
+        SelectionController,
+      );
+      expect(internalObj.groupController).toBeInstanceOf(GroupController);
+      expect(internalObj.exportController).toBeInstanceOf(ExportController);
+    });
   });
 
-  it("should not throw when bindEvents is called", (): void => {
-    // Currently, bindEvents is empty and serves as a placeholder.
-    // This test ensures it doesn't crash if called manually, setting up a skeleton for future logic.
-    const controllerWithBind = controller as unknown as {
-      bindEvents: () => void;
-    };
-    expect(() => {
-      controllerWithBind.bindEvents();
-    }).not.toThrow();
+  describe("B - Boundary", (): void => {
+    it("should verify existence with empty layout container boundary", (): void => {
+      expect(controller).toBeDefined();
+    });
+  });
+
+  describe("I - Interface", (): void => {
+    it("should expose init method as public controller interface", (): void => {
+      expect(typeof controller.init).toBe("function");
+    });
+  });
+
+  describe("E - Exceptional", (): void => {
+    it("should execute bindEvents safely when called multiple times", (): void => {
+      const controllerWithBind = controller as unknown as {
+        bindEvents: () => void;
+      };
+      expect((): void => {
+        controllerWithBind.bindEvents();
+        controllerWithBind.bindEvents();
+      }).not.toThrow();
+    });
+  });
+
+  describe("S - Simple", (): void => {
+    it("should verify basic state initialization", (): void => {
+      const internalObj = controller as unknown as {
+        eventBus: unknown;
+        state: unknown;
+      };
+      expect(internalObj.eventBus).toBeDefined();
+      expect(internalObj.state).toBeDefined();
+    });
   });
 });

@@ -2,55 +2,82 @@ import { describe, it, expect } from "vitest";
 import { ColorUtils } from "../../src/utils/ColorUtils";
 import { type RGB } from "../../src/types";
 
-describe("ColorUtils", (): void => {
-  describe("generateColor", (): void => {
-    it("should return a hex color starting with #", (): void => {
+describe("ColorUtils - ZOMBIES", (): void => {
+  describe("Z - Zero", (): void => {
+    it("should return the first palette color deterministic for index 0", (): void => {
       const color: string = ColorUtils.generateColor(0);
-      expect(color).toMatch(/^#[0-9A-Fa-f]{6}$/);
+      expect(color).toBe("#6366F1");
     });
 
-    it("should return deterministic colors for given indices", (): void => {
-      const color0: string = ColorUtils.generateColor(0);
-      const color1: string = ColorUtils.generateColor(1);
-      expect(color0).toBe("#6366F1");
-      expect(color1).toBe("#10B981");
+    it("should convert a black 6-character hex value to zero rgb structure", (): void => {
+      const rgb: RGB = ColorUtils.hexToRgb("000000");
+      expect(rgb).toEqual({ r: 0, g: 0, b: 0 });
     });
 
-    it("should wrap around the palette using modulo", (): void => {
+    it("should classify black as dark / non-light", (): void => {
+      expect(ColorUtils.isLight("#000000")).toBe(false);
+    });
+  });
+
+  describe("O - One", (): void => {
+    it("should return the second palette color deterministic for index 1", (): void => {
+      const color: string = ColorUtils.generateColor(1);
+      expect(color).toBe("#10B981");
+    });
+
+    it("should convert white 3-character hex to maximum rgb structure", (): void => {
+      const rgb: RGB = ColorUtils.hexToRgb("#fff");
+      expect(rgb).toEqual({ r: 255, g: 255, b: 255 });
+    });
+
+    it("should classify white as light", (): void => {
+      expect(ColorUtils.isLight("#ffffff")).toBe(true);
+    });
+  });
+
+  describe("M - Many", (): void => {
+    it("should wrap around the palette using modulo logic for index 10", (): void => {
       const color0: string = ColorUtils.generateColor(0);
       const color10: string = ColorUtils.generateColor(10);
       expect(color10).toBe(color0);
     });
 
-    it("should handle negative indices and floating point numbers", (): void => {
-      const colorNeg: string = ColorUtils.generateColor(-5);
-      const colorFloat: string = ColorUtils.generateColor(1.7);
-      expect(colorNeg).toBe("#6366F1"); // Math.max(0) -> index 0
-      expect(colorFloat).toBe("#10B981"); // Math.floor(1.7) -> index 1
-    });
-  });
-
-  describe("hexToRgb", (): void => {
-    it("should convert 6-character hex with #", (): void => {
+    it("should convert 6-character hex with # prefix", (): void => {
       const rgb: RGB = ColorUtils.hexToRgb("#ffffff");
       expect(rgb).toEqual({ r: 255, g: 255, b: 255 });
     });
 
-    it("should convert 6-character hex without #", (): void => {
-      const rgb: RGB = ColorUtils.hexToRgb("000000");
-      expect(rgb).toEqual({ r: 0, g: 0, b: 0 });
-    });
-
-    it("should convert 3-character hex with #", (): void => {
-      const rgb: RGB = ColorUtils.hexToRgb("#fff");
-      expect(rgb).toEqual({ r: 255, g: 255, b: 255 });
-    });
-
-    it("should convert 3-character hex without #", (): void => {
+    it("should convert 3-character hex without # prefix", (): void => {
       const rgb: RGB = ColorUtils.hexToRgb("abc");
-      expect(rgb).toEqual({ r: 170, g: 187, b: 204 }); // aa, bb, cc
+      expect(rgb).toEqual({ r: 170, g: 187, b: 204 });
     });
 
+    it("should identify custom colors based on relative luminance threshold", (): void => {
+      expect(ColorUtils.isLight("#ffff00")).toBe(true);
+      expect(ColorUtils.isLight("#000064")).toBe(false);
+    });
+  });
+
+  describe("B - Boundary", (): void => {
+    it("should handle negative index and fallback to zero index", (): void => {
+      const colorNeg: string = ColorUtils.generateColor(-5);
+      expect(colorNeg).toBe("#6366F1");
+    });
+
+    it("should handle floating point index and floor it", (): void => {
+      const colorFloat: string = ColorUtils.generateColor(1.7);
+      expect(colorFloat).toBe("#10B981");
+    });
+  });
+
+  describe("I - Interface", (): void => {
+    it("should return a string matching hex color regex format", (): void => {
+      const color: string = ColorUtils.generateColor(0);
+      expect(color).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    });
+  });
+
+  describe("E - Exceptional", (): void => {
     it("should throw an error for invalid hex length", (): void => {
       expect((): void => {
         ColorUtils.hexToRgb("#ffff");
@@ -61,23 +88,6 @@ describe("ColorUtils", (): void => {
       expect((): void => {
         ColorUtils.hexToRgb("xyzxyz");
       }).toThrow("Invalid hex color characters");
-    });
-  });
-
-  describe("isLight", (): void => {
-    it("should correctly identify white as light", (): void => {
-      expect(ColorUtils.isLight("#ffffff")).toBe(true);
-    });
-
-    it("should correctly identify black as dark", (): void => {
-      expect(ColorUtils.isLight("#000000")).toBe(false);
-    });
-
-    it("should identify custom colors correctly based on relative luminance threshold", (): void => {
-      // Yellow (255, 255, 0) -> luminance = 0.299*255 + 0.587*255 = 225.93 > 128 (light)
-      expect(ColorUtils.isLight("#ffff00")).toBe(true);
-      // Dark Blue (0, 0, 100) -> luminance = 0.114*100 = 11.4 < 128 (dark)
-      expect(ColorUtils.isLight("#000064")).toBe(false);
     });
   });
 });

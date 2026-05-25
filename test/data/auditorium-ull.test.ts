@@ -24,24 +24,21 @@ const TEST_PATIO_ROWS: string[] = [
 
 /**
  * Asserts the coordinate symmetry and spacing between odd and even seat pairs in a row.
- *
- * @param rowSeats - The seat definitions of a single row.
  */
 function verifyRowSymmetry(rowSeats: SeatDefinition[]): void {
-  const oddSeats: SeatDefinition[] = rowSeats.filter(
+  const oddSeats = rowSeats.filter(
     (seat: SeatDefinition): boolean => seat.number % 2 !== 0,
   );
-  const evenSeats: SeatDefinition[] = rowSeats.filter(
+  const evenSeats = rowSeats.filter(
     (seat: SeatDefinition): boolean => seat.number % 2 === 0,
   );
 
   expect(oddSeats.length).toBe(evenSeats.length);
 
   oddSeats.forEach((oddSeat: SeatDefinition): void => {
-    const expectedEvenNumber: number = oddSeat.number + 1;
-    const matchingEvenSeat: SeatDefinition | undefined = evenSeats.find(
-      (evenSeat: SeatDefinition): boolean =>
-        evenSeat.number === expectedEvenNumber,
+    const expectedEvenNumber = oddSeat.number + 1;
+    const matchingEvenSeat = evenSeats.find(
+      (even: SeatDefinition): boolean => even.number === expectedEvenNumber,
     );
 
     expect(matchingEvenSeat).toBeDefined();
@@ -52,128 +49,145 @@ function verifyRowSymmetry(rowSeats: SeatDefinition[]): void {
   });
 }
 
-describe("ULL Auditorium Seating Layout Definition", (): void => {
-  it("should have correct section types and IDs", (): void => {
-    const sections: SectionDefinition[] = ULLAuditoriumVenue.sections;
-    expect(sections).toHaveLength(4);
-    expect(sections[0]?.id).toBe("patio_butacas");
-    expect(sections[1]?.id).toBe("anfiteatro");
-    expect(sections[2]?.id).toBe("palco_bajo");
-    expect(sections[3]?.id).toBe("palco_alto");
+describe("ULL Auditorium Seating - ZOMBIES", (): void => {
+  describe("Z - Zero", (): void => {
+    it("should have zero seats placed exactly on the center line x = 525", (): void => {
+      ULLAuditoriumVenue.sections.forEach(
+        (section: SectionDefinition): void => {
+          section.seats.forEach((seat: SeatDefinition): void => {
+            expect(seat.x).not.toBe(525);
+          });
+        },
+      );
+    });
   });
 
-  it("should have correct total seat counts per section", (): void => {
-    const sections: SectionDefinition[] = ULLAuditoriumVenue.sections;
-    // Patio de butacas: 14 (A) + 22 (B) + 15 * 24 (C-Q) = 396
-    expect(sections[0]?.seats).toHaveLength(396);
-    // Anfiteatro: 7 * 18 (A-G) + 11 (H) = 137
-    expect(sections[1]?.seats).toHaveLength(137);
-    // Palco Bajo: 32
-    expect(sections[2]?.seats).toHaveLength(32);
-    // Palco Alto: 38
-    expect(sections[3]?.seats).toHaveLength(38);
-  });
+  describe("O - One", (): void => {
+    it("should restrict Anfiteatro row H to odd seats only", (): void => {
+      const anfiteatro = ULLAuditoriumVenue.sections[1];
+      expect(anfiteatro).toBeDefined();
+      if (!anfiteatro) return;
 
-  it("should place odd seats on the right and even seats on the left", (): void => {
-    ULLAuditoriumVenue.sections.forEach((section: SectionDefinition): void => {
-      section.seats.forEach((seat: SeatDefinition): void => {
-        const isOdd: boolean = seat.number % 2 !== 0;
-        if (isOdd) {
-          expect(seat.x).toBeGreaterThan(525);
-        } else {
-          expect(seat.x).toBeLessThan(525);
-        }
+      const rowHSeats = anfiteatro.seats.filter(
+        (seat: SeatDefinition): boolean => seat.row === "H",
+      );
+      expect(rowHSeats).toHaveLength(11);
+      rowHSeats.forEach((seat: SeatDefinition): void => {
+        expect(seat.number % 2).not.toBe(0);
       });
     });
   });
 
-  it("should have symmetrical X coordinates around x = 525 for corresponding seat pairs", (): void => {
-    const patio: SectionDefinition | undefined = ULLAuditoriumVenue.sections[0];
-    expect(patio).toBeDefined();
-    if (!patio) {
-      return;
-    }
+  describe("M - Many", (): void => {
+    it("should verify symmetrical X coordinates around x = 525 for corresponding seat pairs", (): void => {
+      const patio = ULLAuditoriumVenue.sections[0];
+      expect(patio).toBeDefined();
+      if (!patio) return;
 
-    TEST_PATIO_ROWS.forEach((rowName: string): void => {
-      const rowSeats: SeatDefinition[] = patio.seats.filter(
-        (seat: SeatDefinition): boolean => seat.row === rowName,
+      TEST_PATIO_ROWS.forEach((rowName: string): void => {
+        const rowSeats = patio.seats.filter(
+          (seat: SeatDefinition): boolean => seat.row === rowName,
+        );
+        verifyRowSymmetry(rowSeats);
+      });
+    });
+
+    it("should contain correct total seat counts per section", (): void => {
+      const sections = ULLAuditoriumVenue.sections;
+      expect(sections[0]?.seats).toHaveLength(396);
+      expect(sections[1]?.seats).toHaveLength(137);
+      expect(sections[2]?.seats).toHaveLength(32);
+      expect(sections[3]?.seats).toHaveLength(38);
+    });
+  });
+
+  describe("B - Boundary", (): void => {
+    it("should place odd seats strictly on the right side and even seats on the left side of x = 525", (): void => {
+      ULLAuditoriumVenue.sections.forEach(
+        (section: SectionDefinition): void => {
+          section.seats.forEach((seat: SeatDefinition): void => {
+            const isOdd = seat.number % 2 !== 0;
+            if (isOdd) {
+              expect(seat.x).toBeGreaterThan(525);
+            } else {
+              expect(seat.x).toBeLessThan(525);
+            }
+          });
+        },
       );
-      verifyRowSymmetry(rowSeats);
+    });
+
+    it("should apply correct offset shifts to patio rows to center them", (): void => {
+      const patio = ULLAuditoriumVenue.sections[0];
+      expect(patio).toBeDefined();
+      if (!patio) return;
+
+      const rowASeats = patio.seats.filter(
+        (seat: SeatDefinition): boolean => seat.row === "A",
+      );
+      expect(rowASeats).toHaveLength(14);
+      expect(
+        rowASeats.find((s: SeatDefinition): boolean => s.number === 1)?.x,
+      ).toBe(620);
+      expect(
+        rowASeats.find((s: SeatDefinition): boolean => s.number === 2)?.x,
+      ).toBe(430);
+
+      const rowBSeats = patio.seats.filter(
+        (seat: SeatDefinition): boolean => seat.row === "B",
+      );
+      expect(rowBSeats).toHaveLength(22);
+      expect(
+        rowBSeats.find((s: SeatDefinition): boolean => s.number === 1)?.x,
+      ).toBe(564);
+      expect(
+        rowBSeats.find((s: SeatDefinition): boolean => s.number === 2)?.x,
+      ).toBe(486);
     });
   });
 
-  it("should restrict Anfiteatro row H to odd seats only", (): void => {
-    const anfiteatro: SectionDefinition | undefined =
-      ULLAuditoriumVenue.sections[1];
-    expect(anfiteatro).toBeDefined();
-    if (!anfiteatro) {
-      return;
-    }
-    const rowHSeats: SeatDefinition[] = anfiteatro.seats.filter(
-      (seat: SeatDefinition): boolean => seat.row === "H",
-    );
-    expect(rowHSeats).toHaveLength(11);
-    rowHSeats.forEach((seat: SeatDefinition): void => {
-      expect(seat.number % 2).not.toBe(0);
+  describe("I - Interface", (): void => {
+    it("should conform to venue section layout schema requirements", (): void => {
+      const sections = ULLAuditoriumVenue.sections;
+      expect(sections).toHaveLength(4);
+      expect(sections[0]?.id).toBe("patio_butacas");
+      expect(sections[1]?.id).toBe("anfiteatro");
+      expect(sections[2]?.id).toBe("palco_bajo");
+      expect(sections[3]?.id).toBe("palco_alto");
     });
   });
 
-  it("should apply correct offset shifts to patio rows to center them", (): void => {
-    const patio: SectionDefinition | undefined = ULLAuditoriumVenue.sections[0];
-    expect(patio).toBeDefined();
-    if (!patio) {
-      return;
-    }
+  describe("E - Exceptional", (): void => {
+    it("should not contain any seats with duplicate coordinate definitions within the same section", (): void => {
+      const coordinates = new Set<string>();
+      ULLAuditoriumVenue.sections.forEach(
+        (section: SectionDefinition): void => {
+          section.seats.forEach((seat: SeatDefinition): void => {
+            const key = `${section.id},${seat.x},${seat.y}`;
+            expect(coordinates.has(key)).toBe(false);
+            coordinates.add(key);
+          });
+        },
+      );
+    });
+  });
 
-    const rowASeats: SeatDefinition[] = patio.seats.filter(
-      (seat: SeatDefinition): boolean => seat.row === "A",
-    );
-    expect(rowASeats).toHaveLength(14);
+  describe("S - Simple", (): void => {
+    it("should verify defined structure shifts on row C", (): void => {
+      const patio = ULLAuditoriumVenue.sections[0];
+      expect(patio).toBeDefined();
+      if (!patio) return;
 
-    const seatA1: SeatDefinition | undefined = rowASeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 1,
-    );
-    expect(seatA1).toBeDefined();
-    expect(seatA1?.x).toBe(620);
-
-    const seatA2: SeatDefinition | undefined = rowASeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 2,
-    );
-    expect(seatA2).toBeDefined();
-    expect(seatA2?.x).toBe(430);
-
-    const rowBSeats: SeatDefinition[] = patio.seats.filter(
-      (seat: SeatDefinition): boolean => seat.row === "B",
-    );
-    expect(rowBSeats).toHaveLength(22);
-
-    const seatB1: SeatDefinition | undefined = rowBSeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 1,
-    );
-    expect(seatB1).toBeDefined();
-    expect(seatB1?.x).toBe(564);
-
-    const seatB2: SeatDefinition | undefined = rowBSeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 2,
-    );
-    expect(seatB2).toBeDefined();
-    expect(seatB2?.x).toBe(486);
-
-    const rowCSeats: SeatDefinition[] = patio.seats.filter(
-      (seat: SeatDefinition): boolean => seat.row === "C",
-    );
-    expect(rowCSeats).toHaveLength(24);
-
-    const seatC1: SeatDefinition | undefined = rowCSeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 1,
-    );
-    expect(seatC1).toBeDefined();
-    expect(seatC1?.x).toBe(550);
-
-    const seatC2: SeatDefinition | undefined = rowCSeats.find(
-      (seat: SeatDefinition): boolean => seat.number === 2,
-    );
-    expect(seatC2).toBeDefined();
-    expect(seatC2?.x).toBe(500);
+      const rowCSeats = patio.seats.filter(
+        (seat: SeatDefinition): boolean => seat.row === "C",
+      );
+      expect(rowCSeats).toHaveLength(24);
+      expect(
+        rowCSeats.find((s: SeatDefinition): boolean => s.number === 1)?.x,
+      ).toBe(550);
+      expect(
+        rowCSeats.find((s: SeatDefinition): boolean => s.number === 2)?.x,
+      ).toBe(500);
+    });
   });
 });
