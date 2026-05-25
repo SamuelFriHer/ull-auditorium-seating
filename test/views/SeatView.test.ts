@@ -16,7 +16,7 @@ class MockClassList {
 }
 
 class MockElement {
-  public style: any = {};
+  public style: { fill?: string } = {};
   public classList = new MockClassList();
   public attributes = new Map<string, string>();
   public innerHTML = "";
@@ -39,7 +39,6 @@ class MockElement {
 }
 
 describe("SeatView", (): void => {
-  let mockElement: MockElement;
   let mockTitleElement: MockElement;
 
   beforeEach(() => {
@@ -49,9 +48,7 @@ describe("SeatView", (): void => {
       createElementNS: vi.fn((ns: string, tag: string) => {
         const el = new MockElement();
         el.setAttribute("data-tag", tag);
-        if (tag === "rect") {
-          mockElement = el;
-        } else if (tag === "title") {
+        if (tag === "title") {
           mockTitleElement = el;
         }
         return el;
