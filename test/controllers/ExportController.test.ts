@@ -39,9 +39,7 @@ describe("ExportController - ZOMBIES", (): void => {
   beforeEach((): void => {
     vi.restoreAllMocks();
     const seat = new Seat("s1", "A", 1, "sec1", 10, 20);
-    const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
-      seat,
-    ]);
+    const section = new Section("sec1", "Sec 1", SectionType.STALLS, [seat]);
     const venue = new Venue("auditorium_ull", "ULL Auditorium", [section]);
     state = new AppState(venue, ["s1"], "g1");
     eventBus = new EventBus();

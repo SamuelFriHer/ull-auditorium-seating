@@ -18,12 +18,10 @@ describe("SelectionController - ZOMBIES", (): void => {
   } => {
     const seat1 = new Seat("s1", "A", 1, "sec1", 10, 20);
     const seat2 = new Seat("s2", "A", 3, "sec1", 30, 20);
-    const section = new Section(
-      "sec1",
-      "Section 1",
-      SectionType.PATIO_BUTACAS,
-      [seat1, seat2],
-    );
+    const section = new Section("sec1", "Section 1", SectionType.STALLS, [
+      seat1,
+      seat2,
+    ]);
     const venue = new Venue("v1", "Venue 1", [section]);
     const state = new AppState(venue);
     const eventBus = new EventBus();

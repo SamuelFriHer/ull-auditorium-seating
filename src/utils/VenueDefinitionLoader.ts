@@ -1,4 +1,4 @@
-import { ULLAuditoriumVenue } from "../data/auditorium-ull";
+import { UllAuditoriumVenue } from "../data/UllAuditorium";
 import { Venue } from "../models/Venue";
 import { Section } from "../models/Section";
 import { Seat } from "../models/Seat";
@@ -14,7 +14,7 @@ export class VenueDefinitionLoader {
    */
   public static loadAuditorium(): Venue {
     const sections: Section[] = this.buildSections();
-    return new Venue(ULLAuditoriumVenue.id, ULLAuditoriumVenue.name, sections);
+    return new Venue(UllAuditoriumVenue.id, UllAuditoriumVenue.name, sections);
   }
 
   /**
@@ -23,7 +23,7 @@ export class VenueDefinitionLoader {
    * @returns An array of Section instances.
    */
   private static buildSections(): Section[] {
-    return ULLAuditoriumVenue.sections.map((sectionDef): Section => {
+    return UllAuditoriumVenue.sections.map((sectionDef): Section => {
       const seats: Seat[] = sectionDef.seats.map((seatDef): Seat => {
         return new Seat(
           seatDef.id,

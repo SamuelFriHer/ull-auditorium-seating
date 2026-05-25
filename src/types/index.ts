@@ -2,10 +2,10 @@
  * Defines the type of auditorium section.
  */
 export enum SectionType {
-  PATIO_BUTACAS = "PATIO_BUTACAS",
-  ANFITEATRO = "ANFITEATRO",
-  PALCO_BAJO = "PALCO_BAJO",
-  PALCO_ALTO = "PALCO_ALTO",
+  STALLS = "STALLS",
+  AMPHITHEATER = "AMPHITHEATER",
+  LOWER_BOX = "LOWER_BOX",
+  UPPER_BOX = "UPPER_BOX",
 }
 
 /**

@@ -1,19 +1,19 @@
 import type { SeatDefinition } from "../types";
 
 /**
- * Generates seat definitions for the Palco Bajo section.
- * Palco Bajo has 32 seats: 16 on the odd side (right) and 16 on the even side (left).
+ * Generates seat definitions for the Lower Box section.
+ * Lower Box has 32 seats: 16 on the odd side (right) and 16 on the even side (left).
  *
- * @returns Array of seat definitions for Palco Bajo.
+ * @returns Array of seat definitions for Lower Box.
  */
-export function generatePalcoBajo(): SeatDefinition[] {
+export function generateLowerBox(): SeatDefinition[] {
   const seats: SeatDefinition[] = [];
 
   for (let index: number = 0; index < 16; index++) {
     const oddNumber: number = 2 * index + 1;
     seats.push({
-      id: `palco_bajo-Impar-${oddNumber}`,
-      row: "Impar",
+      id: `lower_box-Odd-${oddNumber}`,
+      row: "Odd",
       number: oddNumber,
       x: 910,
       y: 670 - index * 28,
@@ -21,8 +21,8 @@ export function generatePalcoBajo(): SeatDefinition[] {
 
     const evenNumber: number = 2 * index + 2;
     seats.push({
-      id: `palco_bajo-Par-${evenNumber}`,
-      row: "Par",
+      id: `lower_box-Even-${evenNumber}`,
+      row: "Even",
       number: evenNumber,
       x: 140,
       y: 670 - index * 28,
@@ -33,19 +33,19 @@ export function generatePalcoBajo(): SeatDefinition[] {
 }
 
 /**
- * Generates seat definitions for the Palco Alto section.
- * Palco Alto has 38 seats: 19 on the odd side (right) and 19 on the even side (left).
+ * Generates seat definitions for the Upper Box section.
+ * Upper Box has 38 seats: 19 on the odd side (right) and 19 on the even side (left).
  *
- * @returns Array of seat definitions for Palco Alto.
+ * @returns Array of seat definitions for Upper Box.
  */
-export function generatePalcoAlto(): SeatDefinition[] {
+export function generateUpperBox(): SeatDefinition[] {
   const seats: SeatDefinition[] = [];
 
   for (let index: number = 0; index < 19; index++) {
     const oddNumber: number = 2 * index + 1;
     seats.push({
-      id: `palco_alto-Impar-${oddNumber}`,
-      row: "Impar",
+      id: `upper_box-Odd-${oddNumber}`,
+      row: "Odd",
       number: oddNumber,
       x: 910,
       y: 670 - index * 28,
@@ -53,8 +53,8 @@ export function generatePalcoAlto(): SeatDefinition[] {
 
     const evenNumber: number = 2 * index + 2;
     seats.push({
-      id: `palco_alto-Par-${evenNumber}`,
-      row: "Par",
+      id: `upper_box-Even-${evenNumber}`,
+      row: "Even",
       number: evenNumber,
       x: 140,
       y: 670 - index * 28,

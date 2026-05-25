@@ -10,11 +10,11 @@ import type { Seat } from "../models/Seat";
 export function getSectionIdsForFloor(floor: number): string[] {
   switch (floor) {
     case 0:
-      return ["patio_butacas"];
+      return ["stalls"];
     case 1:
-      return ["anfiteatro", "palco_bajo"];
+      return ["amphitheater", "lower_box"];
     case 2:
-      return ["palco_alto"];
+      return ["upper_box"];
     default:
       return [];
   }

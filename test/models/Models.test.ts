@@ -11,21 +11,14 @@ import { SectionType, SelectionMode } from "../../src/types";
 describe("Models - ZOMBIES", (): void => {
   describe("Z - Zero", (): void => {
     it("should return null when searching for non-existing seat", (): void => {
-      const section = new Section(
-        "sec1",
-        "Sec 1",
-        SectionType.PATIO_BUTACAS,
-        [],
-      );
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, []);
       expect(section.getSeat("s4")).toBeNull();
     });
 
     it("should empty seat group lists when unassigning all seats", (): void => {
       const seat = new Seat("s1", "A", 1, "sec1", 10, 20);
       const group = new SeatGroup("g1", "Group 1", "#FF0000");
-      const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
-        seat,
-      ]);
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, [seat]);
       const venue = new Venue("v1", "Venue 1", [section], [group]);
 
       venue.assignSeatsToGroup(["s1"], "g1");
@@ -50,9 +43,7 @@ describe("Models - ZOMBIES", (): void => {
 
     it("should find the single seat in a row", (): void => {
       const seat = new Seat("s3", "B", 1, "sec1", 10, 40);
-      const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
-        seat,
-      ]);
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, [seat]);
       expect(section.getSeatsInRow("B")).toEqual([seat]);
     });
   });
@@ -61,7 +52,7 @@ describe("Models - ZOMBIES", (): void => {
     it("should retrieve multiple seats in a row", (): void => {
       const s1 = new Seat("s1", "A", 1, "sec1", 10, 20);
       const s2 = new Seat("s2", "A", 3, "sec1", 30, 20);
-      const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, [
         s1,
         s2,
       ]);
@@ -71,7 +62,7 @@ describe("Models - ZOMBIES", (): void => {
     it("should assign and transition seats between multiple groups", (): void => {
       const s1 = new Seat("s1", "A", 1, "sec1", 10, 20);
       const s2 = new Seat("s2", "A", 3, "sec1", 30, 20);
-      const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, [
         s1,
         s2,
       ]);
@@ -114,9 +105,7 @@ describe("Models - ZOMBIES", (): void => {
   describe("I - Interface", (): void => {
     it("should define models that conform to expected signatures and structures", (): void => {
       const seat = new Seat("s1", "A", 1, "sec1", 10, 20);
-      const section = new Section("sec1", "Sec 1", SectionType.PATIO_BUTACAS, [
-        seat,
-      ]);
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, [seat]);
       const venue = new Venue("v1", "Venue 1", [section]);
 
       expect(seat).toBeInstanceOf(Seat);
@@ -127,12 +116,7 @@ describe("Models - ZOMBIES", (): void => {
 
   describe("E - Exceptional", (): void => {
     it("should handle invalid seat query gracefully and return null", (): void => {
-      const section = new Section(
-        "sec1",
-        "Sec 1",
-        SectionType.PATIO_BUTACAS,
-        [],
-      );
+      const section = new Section("sec1", "Sec 1", SectionType.STALLS, []);
       expect(section.getSeat("")).toBeNull();
       expect(section.getSeat("non-existent-id")).toBeNull();
     });

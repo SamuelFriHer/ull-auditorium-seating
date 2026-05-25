@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { ULLAuditoriumVenue } from "../../src/data/auditorium-ull";
+import { UllAuditoriumVenue } from "../../src/data/UllAuditorium";
 import type { SeatDefinition, SectionDefinition } from "../../src/types";
 
-const TEST_PATIO_ROWS: string[] = [
+const TEST_STALLS_ROWS: string[] = [
   "Q",
   "P",
   "O",
@@ -52,7 +52,7 @@ function verifyRowSymmetry(rowSeats: SeatDefinition[]): void {
 describe("ULL Auditorium Seating - ZOMBIES", (): void => {
   describe("Z - Zero", (): void => {
     it("should have zero seats placed exactly on the center line x = 525", (): void => {
-      ULLAuditoriumVenue.sections.forEach(
+      UllAuditoriumVenue.sections.forEach(
         (section: SectionDefinition): void => {
           section.seats.forEach((seat: SeatDefinition): void => {
             expect(seat.x).not.toBe(525);
@@ -63,12 +63,12 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
   });
 
   describe("O - One", (): void => {
-    it("should restrict Anfiteatro row H to odd seats only", (): void => {
-      const anfiteatro = ULLAuditoriumVenue.sections[1];
-      expect(anfiteatro).toBeDefined();
-      if (!anfiteatro) return;
+    it("should restrict Amphitheater row H to odd seats only", (): void => {
+      const amphitheater = UllAuditoriumVenue.sections[1];
+      expect(amphitheater).toBeDefined();
+      if (!amphitheater) return;
 
-      const rowHSeats = anfiteatro.seats.filter(
+      const rowHSeats = amphitheater.seats.filter(
         (seat: SeatDefinition): boolean => seat.row === "H",
       );
       expect(rowHSeats).toHaveLength(11);
@@ -80,12 +80,12 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
 
   describe("M - Many", (): void => {
     it("should verify symmetrical X coordinates around x = 525 for corresponding seat pairs", (): void => {
-      const patio = ULLAuditoriumVenue.sections[0];
-      expect(patio).toBeDefined();
-      if (!patio) return;
+      const stalls = UllAuditoriumVenue.sections[0];
+      expect(stalls).toBeDefined();
+      if (!stalls) return;
 
-      TEST_PATIO_ROWS.forEach((rowName: string): void => {
-        const rowSeats = patio.seats.filter(
+      TEST_STALLS_ROWS.forEach((rowName: string): void => {
+        const rowSeats = stalls.seats.filter(
           (seat: SeatDefinition): boolean => seat.row === rowName,
         );
         verifyRowSymmetry(rowSeats);
@@ -93,7 +93,7 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
     });
 
     it("should contain correct total seat counts per section", (): void => {
-      const sections = ULLAuditoriumVenue.sections;
+      const sections = UllAuditoriumVenue.sections;
       expect(sections[0]?.seats).toHaveLength(396);
       expect(sections[1]?.seats).toHaveLength(137);
       expect(sections[2]?.seats).toHaveLength(32);
@@ -103,7 +103,7 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
 
   describe("B - Boundary", (): void => {
     it("should place odd seats strictly on the right side and even seats on the left side of x = 525", (): void => {
-      ULLAuditoriumVenue.sections.forEach(
+      UllAuditoriumVenue.sections.forEach(
         (section: SectionDefinition): void => {
           section.seats.forEach((seat: SeatDefinition): void => {
             const isOdd = seat.number % 2 !== 0;
@@ -117,12 +117,12 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
       );
     });
 
-    it("should apply correct offset shifts to patio rows to center them", (): void => {
-      const patio = ULLAuditoriumVenue.sections[0];
-      expect(patio).toBeDefined();
-      if (!patio) return;
+    it("should apply correct offset shifts to stalls rows to center them", (): void => {
+      const stalls = UllAuditoriumVenue.sections[0];
+      expect(stalls).toBeDefined();
+      if (!stalls) return;
 
-      const rowASeats = patio.seats.filter(
+      const rowASeats = stalls.seats.filter(
         (seat: SeatDefinition): boolean => seat.row === "A",
       );
       expect(rowASeats).toHaveLength(14);
@@ -133,7 +133,7 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
         rowASeats.find((s: SeatDefinition): boolean => s.number === 2)?.x,
       ).toBe(430);
 
-      const rowBSeats = patio.seats.filter(
+      const rowBSeats = stalls.seats.filter(
         (seat: SeatDefinition): boolean => seat.row === "B",
       );
       expect(rowBSeats).toHaveLength(22);
@@ -148,19 +148,19 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
 
   describe("I - Interface", (): void => {
     it("should conform to venue section layout schema requirements", (): void => {
-      const sections = ULLAuditoriumVenue.sections;
+      const sections = UllAuditoriumVenue.sections;
       expect(sections).toHaveLength(4);
-      expect(sections[0]?.id).toBe("patio_butacas");
-      expect(sections[1]?.id).toBe("anfiteatro");
-      expect(sections[2]?.id).toBe("palco_bajo");
-      expect(sections[3]?.id).toBe("palco_alto");
+      expect(sections[0]?.id).toBe("stalls");
+      expect(sections[1]?.id).toBe("amphitheater");
+      expect(sections[2]?.id).toBe("lower_box");
+      expect(sections[3]?.id).toBe("upper_box");
     });
   });
 
   describe("E - Exceptional", (): void => {
     it("should not contain any seats with duplicate coordinate definitions within the same section", (): void => {
       const coordinates = new Set<string>();
-      ULLAuditoriumVenue.sections.forEach(
+      UllAuditoriumVenue.sections.forEach(
         (section: SectionDefinition): void => {
           section.seats.forEach((seat: SeatDefinition): void => {
             const key = `${section.id},${seat.x},${seat.y}`;
@@ -174,11 +174,11 @@ describe("ULL Auditorium Seating - ZOMBIES", (): void => {
 
   describe("S - Simple", (): void => {
     it("should verify defined structure shifts on row C", (): void => {
-      const patio = ULLAuditoriumVenue.sections[0];
-      expect(patio).toBeDefined();
-      if (!patio) return;
+      const stalls = UllAuditoriumVenue.sections[0];
+      expect(stalls).toBeDefined();
+      if (!stalls) return;
 
-      const rowCSeats = patio.seats.filter(
+      const rowCSeats = stalls.seats.filter(
         (seat: SeatDefinition): boolean => seat.row === "C",
       );
       expect(rowCSeats).toHaveLength(24);

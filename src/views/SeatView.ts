@@ -46,7 +46,13 @@ export class SeatView implements IView {
       "http://www.w3.org/2000/svg",
       "title",
     );
-    title.textContent = `Fila ${this.seat.row}, Asiento ${this.seat.number}`;
+    const rowLabel: string =
+      this.seat.row === "Odd"
+        ? "Impar"
+        : this.seat.row === "Even"
+          ? "Par"
+          : this.seat.row;
+    title.textContent = `Fila ${rowLabel}, Asiento ${this.seat.number}`;
     this.element.appendChild(title);
   }
 
