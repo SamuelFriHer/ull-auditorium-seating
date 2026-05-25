@@ -96,10 +96,13 @@ export class GroupPanelView implements IView {
     const items = this.container.querySelectorAll(".group-item");
     items.forEach((item): void => {
       const groupId = item.getAttribute("data-group-id");
+      const groupInfo = item.querySelector(".group-info");
       if (groupId === id) {
         item.classList.add("active");
+        if (groupInfo) groupInfo.setAttribute("aria-pressed", "true");
       } else {
         item.classList.remove("active");
+        if (groupInfo) groupInfo.setAttribute("aria-pressed", "false");
       }
     });
   }
@@ -162,7 +165,9 @@ export class GroupPanelView implements IView {
   private initGroupItem(groupItem: HTMLDivElement, group: SeatGroup): void {
     groupItem.className = "group-item";
     groupItem.setAttribute("data-group-id", group.id);
-    if (this.state.activeGroupId === group.id) {
+
+    const isActive = this.state.activeGroupId === group.id;
+    if (isActive) {
       groupItem.classList.add("active");
     }
 
@@ -170,7 +175,7 @@ export class GroupPanelView implements IView {
     const selectedCount = this.state.selectedSeatIds.length;
 
     groupItem.innerHTML = `
-      <div class="group-info">
+      <div class="group-info" role="button" tabindex="0" aria-pressed="${isActive ? "true" : "false"}">
         <span class="group-label">${group.label}</span>
         <span class="group-count">${group.seatIds.length} butacas</span>
       </div>
@@ -192,13 +197,23 @@ export class GroupPanelView implements IView {
     groupItem: HTMLDivElement,
     group: SeatGroup,
   ): void {
-    groupItem
-      .querySelector(".group-info")
-      ?.addEventListener("click", (): void => {
-        const nextActiveId =
-          this.state.activeGroupId === group.id ? null : group.id;
-        this.eventBus.emit("group:active-change", { id: nextActiveId });
-      });
+    const toggleActiveGroup = (): void => {
+      const nextActiveId =
+        this.state.activeGroupId === group.id ? null : group.id;
+      this.eventBus.emit("group:active-change", { id: nextActiveId });
+    };
+
+    const groupInfo = groupItem.querySelector(".group-info");
+
+    groupInfo?.addEventListener("click", toggleActiveGroup);
+
+    groupInfo?.addEventListener("keydown", (event: Event): void => {
+      const keyboardEvent = event as KeyboardEvent;
+      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+        keyboardEvent.preventDefault();
+        toggleActiveGroup();
+      }
+    });
 
     groupItem
       .querySelector(".btn-assign-seats")
@@ -214,7 +229,11 @@ export class GroupPanelView implements IView {
       .querySelector(".btn-delete-group")
       ?.addEventListener("click", (event: Event): void => {
         event.stopPropagation();
-        this.eventBus.emit("group:delete", { id: group.id });
+        if (
+          window.confirm("¿Estás seguro de que deseas eliminar este grupo?")
+        ) {
+          this.eventBus.emit("group:delete", { id: group.id });
+        }
       });
   }
 }
