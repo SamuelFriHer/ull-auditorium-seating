@@ -52,4 +52,26 @@ describe("AppController", (): void => {
 
     expect(renderSpy).toHaveBeenCalledTimes(1);
   });
+
+  it("should call bindEvents during initialization", (): void => {
+    // Spy on the prototype before instantiating a new controller
+    // because bindEvents is called in the constructor.
+    const bindEventsSpy = vi.spyOn(
+      AppController.prototype as any,
+      "bindEvents",
+    );
+
+    // Create a new instance to trigger the constructor
+    new AppController({} as HTMLElement);
+
+    expect(bindEventsSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not throw when bindEvents is called", (): void => {
+    // Currently, bindEvents is empty and serves as a placeholder.
+    // This test ensures it doesn't crash if called manually, setting up a skeleton for future logic.
+    expect(() => {
+      (controller as any).bindEvents();
+    }).not.toThrow();
+  });
 });
