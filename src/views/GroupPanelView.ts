@@ -69,8 +69,11 @@ export class GroupPanelView implements IView {
 
     this.attachFormEvents();
 
-    for (const group of this.state.venue.groups) {
-      this.renderGroup(group);
+    const listContainer = this.container.querySelector("#groups-list");
+    if (listContainer) {
+      for (const group of this.state.venue.groups) {
+        this.renderGroup(group, listContainer);
+      }
     }
   }
 
@@ -78,13 +81,9 @@ export class GroupPanelView implements IView {
    * Appends and renders a single seat group item to the sidebar list.
    *
    * @param group - The SeatGroup model to render.
+   * @param listContainer - The DOM container element to append to.
    */
-  public renderGroup(group: SeatGroup): void {
-    const listContainer = this.container.querySelector("#groups-list");
-    if (!listContainer) {
-      return;
-    }
-
+  public renderGroup(group: SeatGroup, listContainer: Element): void {
     const itemView = new GroupItemView(group, this.state, this.eventBus);
     const element = itemView.getElement();
     listContainer.appendChild(element);
