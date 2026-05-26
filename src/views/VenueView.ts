@@ -1,7 +1,10 @@
 import type { AppState } from "../models/AppState";
 import type { Section } from "../models/Section";
 import type { EventBus } from "../events/EventBus";
+import type { Seat } from "../models/Seat";
+import type { SeatGroup } from "../models/SeatGroup";
 import { SectionView } from "./SectionView";
+import { SeatView } from "./SeatView";
 import type { IView } from "./IView";
 import {
   getSectionIdsForFloor,
@@ -16,6 +19,7 @@ export class VenueView implements IView {
   private readonly state: AppState;
   private readonly eventBus: EventBus;
   private readonly sectionViews: Map<string, SectionView>;
+  private readonly seatViews: Map<string, SeatView>;
 
   private readonly onVenueUpdated: () => void;
   private readonly onVenueLoaded: () => void;
@@ -33,6 +37,7 @@ export class VenueView implements IView {
     this.state = state;
     this.eventBus = eventBus;
     this.sectionViews = new Map();
+    this.seatViews = new Map();
 
     this.onVenueUpdated = (): void => this.updateSeatStates();
     this.onVenueLoaded = (): void => this.render();
@@ -48,15 +53,33 @@ export class VenueView implements IView {
    * Renders the active floor SVG map and child section views.
    */
   public render(): void {
-    this.container.innerHTML = "";
-    for (const view of this.sectionViews.values()) {
-      view.destroy();
-    }
-    this.sectionViews.clear();
+    this.clearViews();
 
     const activeSections: Section[] = this.getSectionsForFloor(
       this.state.activeFloor,
     );
+    const svg: SVGElement = this.createSvgContainer();
+
+    this.renderSections(activeSections, svg);
+    this.updateSeatStates();
+  }
+
+  /**
+   * Clears all currently rendered section and seat views.
+   */
+  private clearViews(): void {
+    this.container.innerHTML = "";
+    this.sectionViews.forEach((view: SectionView): void => {
+      view.destroy();
+    });
+    this.sectionViews.clear();
+    this.seatViews.clear();
+  }
+
+  /**
+   * Creates and configures the parent SVG element.
+   */
+  private createSvgContainer(): SVGElement {
     const svg: SVGElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "svg",
@@ -67,14 +90,32 @@ export class VenueView implements IView {
     );
     svg.setAttribute("class", "venue-svg");
     this.container.appendChild(svg);
+    return svg;
+  }
 
-    for (const section of activeSections) {
-      const sectionView = new SectionView(section, svg, this.eventBus);
+  /**
+   * Renders individual section views and populates cached seat views.
+   *
+   * @param sections - List of sections to render.
+   * @param svg - The parent SVG element container.
+   */
+  private renderSections(sections: Section[], svg: SVGElement): void {
+    sections.forEach((section: Section): void => {
+      const sectionView: SectionView = new SectionView(
+        section,
+        svg,
+        this.eventBus,
+      );
       sectionView.render();
       this.sectionViews.set(section.id, sectionView);
-    }
 
-    this.updateSeatStates();
+      section.seats.forEach((seat: Seat): void => {
+        const seatView: SeatView | null = sectionView.getSeatView(seat.id);
+        if (seatView) {
+          this.seatViews.set(seat.id, seatView);
+        }
+      });
+    });
   }
 
   /**
@@ -95,10 +136,11 @@ export class VenueView implements IView {
     this.eventBus.off("venue:loaded", this.onVenueLoaded);
     this.eventBus.off("floor:change", this.onFloorChanged);
 
-    for (const view of this.sectionViews.values()) {
+    this.sectionViews.forEach((view: SectionView): void => {
       view.destroy();
-    }
+    });
     this.sectionViews.clear();
+    this.seatViews.clear();
     this.container.innerHTML = "";
   }
 
@@ -116,30 +158,21 @@ export class VenueView implements IView {
    */
   private updateSeatStates(): void {
     const selectedSet: Set<string> = new Set(this.state.selectedSeatIds);
-    const activeSections: Section[] = this.getSectionsForFloor(
-      this.state.activeFloor,
-    );
+    const groupColorMap: Map<string, string> = new Map();
 
-    for (const section of activeSections) {
-      const sectionView = this.sectionViews.get(section.id);
-      if (!sectionView) {
-        continue;
-      }
+    this.state.venue.groups.forEach((group: SeatGroup): void => {
+      groupColorMap.set(group.id, group.color);
+    });
 
-      for (const seat of section.seats) {
-        const seatView = sectionView.getSeatView(seat.id);
-        if (!seatView) {
-          continue;
-        }
+    this.seatViews.forEach((seatView: SeatView, seatId: string): void => {
+      seatView.setSelected(selectedSet.has(seatId));
 
-        seatView.setSelected(selectedSet.has(seat.id));
-
-        const groupColor: string | null = seat.groupId
-          ? this.state.venue.getGroup(seat.groupId)?.color || null
-          : null;
-        seatView.setGroupColor(groupColor);
-      }
-    }
+      const seat: Seat = seatView.getSeat();
+      const groupColor: string | null = seat.groupId
+        ? groupColorMap.get(seat.groupId) || null
+        : null;
+      seatView.setGroupColor(groupColor);
+    });
   }
 
   /**

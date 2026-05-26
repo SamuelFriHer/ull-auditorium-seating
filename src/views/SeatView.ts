@@ -7,6 +7,8 @@ import type { IView } from "./IView";
 export class SeatView implements IView {
   private readonly element: SVGRectElement;
   private readonly seat: Seat;
+  private isSelected: boolean | null;
+  private currentGroupColor: string | null;
 
   /**
    * Initializes a new SeatView instance.
@@ -19,6 +21,8 @@ export class SeatView implements IView {
       "http://www.w3.org/2000/svg",
       "rect",
     );
+    this.isSelected = null;
+    this.currentGroupColor = null;
     this.initElement();
   }
 
@@ -30,9 +34,18 @@ export class SeatView implements IView {
   }
 
   /**
+   * Returns the seat model associated with this view.
+   */
+  public getSeat(): Seat {
+    return this.seat;
+  }
+
+  /**
    * Renders the seat element properties and appends a tooltip title.
    */
   public render(): void {
+    this.isSelected = null;
+    this.currentGroupColor = null;
     this.element.setAttribute("class", "seat");
     this.element.setAttribute("x", this.seat.x.toString());
     this.element.setAttribute("y", this.seat.y.toString());
@@ -62,6 +75,10 @@ export class SeatView implements IView {
    * @param selected - True if the seat is currently selected.
    */
   public setSelected(selected: boolean): void {
+    if (this.isSelected === selected) {
+      return;
+    }
+    this.isSelected = selected;
     if (selected) {
       this.element.classList.add("selected");
     } else {
@@ -75,6 +92,10 @@ export class SeatView implements IView {
    * @param color - The hex/css color code, or null if unassigned.
    */
   public setGroupColor(color: string | null): void {
+    if (this.currentGroupColor === color) {
+      return;
+    }
+    this.currentGroupColor = color;
     if (color) {
       this.element.style.fill = color;
       this.element.classList.add("assigned");

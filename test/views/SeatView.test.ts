@@ -156,6 +156,56 @@ describe("SeatView - ZOMBIES", (): void => {
       expect(elementEven.children[0]?.textContent).toBe("Fila Par, Asiento 2");
       expect(elementOdd.children[0]?.textContent).toBe("Fila Impar, Asiento 3");
     });
+
+    it("should avoid redundant DOM updates for selection", (): void => {
+      const seat: Seat = new Seat("seat-1", "A", 1, "sec-1", 0, 0);
+      const seatView: SeatView = new SeatView(seat);
+      const element: MockSVGElement =
+        seatView.getElement() as unknown as MockSVGElement;
+
+      const addSpy = vi.spyOn(element.classList, "add");
+      const removeSpy = vi.spyOn(element.classList, "remove");
+
+      seatView.setSelected(true);
+      seatView.setSelected(true);
+
+      expect(addSpy).toHaveBeenCalledTimes(1);
+
+      seatView.setSelected(false);
+      seatView.setSelected(false);
+
+      expect(removeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should avoid redundant DOM updates for group color", (): void => {
+      const seat: Seat = new Seat("seat-1", "A", 1, "sec-1", 0, 0);
+      const seatView: SeatView = new SeatView(seat);
+      const element: MockSVGElement =
+        seatView.getElement() as unknown as MockSVGElement;
+
+      let fillSetCount: number = 0;
+      let internalFill: string = "";
+      Object.defineProperty(element.style, "fill", {
+        get(): string {
+          return internalFill;
+        },
+        set(val: string): void {
+          fillSetCount++;
+          internalFill = val;
+        },
+        configurable: true,
+      });
+
+      seatView.setGroupColor("#FF0000");
+      seatView.setGroupColor("#FF0000");
+
+      expect(fillSetCount).toBe(1);
+
+      seatView.setGroupColor(null);
+      seatView.setGroupColor(null);
+
+      expect(fillSetCount).toBe(2);
+    });
   });
 
   describe("I - Interface", (): void => {
@@ -168,6 +218,12 @@ describe("SeatView - ZOMBIES", (): void => {
       expect(typeof seatView.getElement).toBe("function");
       expect(typeof seatView.setSelected).toBe("function");
       expect(typeof seatView.setGroupColor).toBe("function");
+    });
+
+    it("should return the seat model using getSeat()", (): void => {
+      const seat: Seat = new Seat("seat-1", "A", 1, "sec-1", 0, 0);
+      const seatView: SeatView = new SeatView(seat);
+      expect(seatView.getSeat()).toBe(seat);
     });
   });
 
