@@ -14,6 +14,8 @@ export class Venue {
   public readonly sections: Section[];
   /** The seating groups defined in the venue. */
   public readonly groups: SeatGroup[];
+  /** Map of seat IDs to Seat instances for O(1) lookup. */
+  private readonly seatsById: Map<string, Seat>;
 
   /**
    * Constructs a new Venue instance.
@@ -33,22 +35,23 @@ export class Venue {
     this.name = name;
     this.sections = sections;
     this.groups = groups;
+
+    this.seatsById = new Map<string, Seat>();
+    sections.forEach((section: Section): void => {
+      section.seats.forEach((seat: Seat): void => {
+        this.seatsById.set(seat.id, seat);
+      });
+    });
   }
 
   /**
-   * Finds a seat by its ID within any section of the venue.
+   * Finds a seat by its ID within the venue.
    *
    * @param id - Seat identifier.
    * @returns The matching Seat, or null if not found.
    */
   public getSeat(id: string): Seat | null {
-    for (const section of this.sections) {
-      const seat = section.getSeat(id);
-      if (seat) {
-        return seat;
-      }
-    }
-    return null;
+    return this.seatsById.get(id) || null;
   }
 
   /**
