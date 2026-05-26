@@ -47,18 +47,28 @@ export class GroupItemView {
     }
 
     this.element.style.borderLeft = `4px solid ${this.group.color}`;
-    const selectedCount = this.state.selectedSeatIds.length;
 
+    this.renderHtml(isActive);
+    this.populateSafeText();
+  }
+
+  /**
+   * Renders the HTML structure with placeholders for text content.
+   *
+   * @param isActive - Indicates if the group is currently active.
+   */
+  private renderHtml(isActive: boolean): void {
+    const selectedCount = this.state.selectedSeatIds.length;
     this.element.innerHTML = `
       <div class="group-info" role="button" tabindex="0" aria-pressed="${isActive ? "true" : "false"}">
-        <span class="group-label">${this.group.label}</span>
+        <span class="group-label"></span>
         <span class="group-count">${this.group.seatIds.length} butacas</span>
       </div>
       <div class="group-actions">
         <button class="btn-assign-seats" title="${selectedCount === 0 ? "Selecciona butacas primero" : "Asignar seleccionados"}" ${selectedCount === 0 ? "disabled" : ""}>
           Asignar
         </button>
-        <button class="btn-delete-group" title="Eliminar grupo ${this.group.label}" aria-label="Eliminar grupo ${this.group.label}">
+        <button class="btn-delete-group">
           &times;
         </button>
       </div>
@@ -66,9 +76,34 @@ export class GroupItemView {
   }
 
   /**
+   * Populates the HTML elements with safe text content.
+   */
+  private populateSafeText(): void {
+    const labelSpan = this.element.querySelector(".group-label");
+    if (labelSpan) {
+      labelSpan.textContent = this.group.label;
+    }
+
+    const deleteBtn = this.element.querySelector(".btn-delete-group");
+    if (deleteBtn) {
+      const deleteText = `Eliminar grupo ${this.group.label}`;
+      deleteBtn.setAttribute("title", deleteText);
+      deleteBtn.setAttribute("aria-label", deleteText);
+    }
+  }
+
+  /**
    * Attaches interaction event listeners to the group list item element.
    */
   private attachEvents(): void {
+    this.attachInfoEvents();
+    this.attachActionEvents();
+  }
+
+  /**
+   * Attaches interaction event listeners for clicking/activating the group.
+   */
+  private attachInfoEvents(): void {
     const toggleActiveGroup = (): void => {
       const nextActiveId =
         this.state.activeGroupId === this.group.id ? null : this.group.id;
@@ -76,9 +111,7 @@ export class GroupItemView {
     };
 
     const groupInfo = this.element.querySelector(".group-info");
-
     groupInfo?.addEventListener("click", toggleActiveGroup);
-
     groupInfo?.addEventListener("keydown", (event: Event): void => {
       const keyboardEvent = event as KeyboardEvent;
       if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
@@ -86,7 +119,12 @@ export class GroupItemView {
         toggleActiveGroup();
       }
     });
+  }
 
+  /**
+   * Attaches interaction event listeners for action buttons (assign, delete).
+   */
+  private attachActionEvents(): void {
     this.element
       .querySelector(".btn-assign-seats")
       ?.addEventListener("click", (event: Event): void => {
@@ -101,11 +139,8 @@ export class GroupItemView {
       .querySelector(".btn-delete-group")
       ?.addEventListener("click", (event: Event): void => {
         event.stopPropagation();
-        if (
-          window.confirm(
-            `¿Estás seguro de que deseas eliminar el grupo "${this.group.label}"?`,
-          )
-        ) {
+        const confirmationMessage = `¿Estás seguro de que deseas eliminar el grupo "${this.group.label}"?`;
+        if (window.confirm(confirmationMessage)) {
           this.eventBus.emit("group:delete", { id: this.group.id });
         }
       });
