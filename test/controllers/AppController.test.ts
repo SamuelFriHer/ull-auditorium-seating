@@ -24,13 +24,12 @@ describe("AppController - ZOMBIES", (): void => {
   });
 
   describe("Z - Zero", (): void => {
-    it("should not throw error when bindEvents is called without any event listeners", (): void => {
-      const controllerWithBind = controller as unknown as {
-        bindEvents: () => void;
+    it("should not render the view prior to initialization", (): void => {
+      const internalObj = controller as unknown as {
+        appView: { render: () => void };
       };
-      expect((): void => {
-        controllerWithBind.bindEvents();
-      }).not.toThrow();
+      const renderSpy = vi.spyOn(internalObj.appView, "render");
+      expect(renderSpy).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -44,17 +43,6 @@ describe("AppController - ZOMBIES", (): void => {
       controller.init();
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call bindEvents exactly once during constructor initialization", (): void => {
-      const prototypeWithBind = AppController.prototype as unknown as {
-        bindEvents: () => void;
-      };
-      const bindEventsSpy = vi.spyOn(prototypeWithBind, "bindEvents");
-
-      new AppController({} as HTMLElement);
-
-      expect(bindEventsSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -86,13 +74,10 @@ describe("AppController - ZOMBIES", (): void => {
   });
 
   describe("E - Exceptional", (): void => {
-    it("should execute bindEvents safely when called multiple times", (): void => {
-      const controllerWithBind = controller as unknown as {
-        bindEvents: () => void;
-      };
+    it("should handle multiple initialization calls safely without throwing errors", (): void => {
       expect((): void => {
-        controllerWithBind.bindEvents();
-        controllerWithBind.bindEvents();
+        controller.init();
+        controller.init();
       }).not.toThrow();
     });
   });

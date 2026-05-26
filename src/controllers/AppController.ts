@@ -34,8 +34,6 @@ export class AppController {
     this.groupController = new GroupController(this.state, this.eventBus);
     this.exportController = new ExportController(this.state, this.eventBus);
     this.appView = new AppView(container, this.state, this.eventBus);
-
-    this.bindEvents();
   }
 
   /**
@@ -43,13 +41,5 @@ export class AppController {
    */
   public init(): void {
     this.appView.render();
-  }
-
-  /**
-   * Binds global application event listeners.
-   */
-  private bindEvents(): void {
-    // Sub-controllers handle event bus events directly.
-    // This hook is kept for future central orchestrations.
   }
 }
