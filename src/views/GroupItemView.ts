@@ -58,7 +58,7 @@ export class GroupItemView {
         <button class="btn-assign-seats" title="${selectedCount === 0 ? "Selecciona butacas primero" : "Asignar seleccionados"}" ${selectedCount === 0 ? "disabled" : ""}>
           Asignar
         </button>
-        <button class="btn-delete-group" title="Eliminar grupo" aria-label="Eliminar grupo">
+        <button class="btn-delete-group" title="Eliminar grupo ${this.group.label}" aria-label="Eliminar grupo ${this.group.label}">
           &times;
         </button>
       </div>
@@ -102,7 +102,9 @@ export class GroupItemView {
       ?.addEventListener("click", (event: Event): void => {
         event.stopPropagation();
         if (
-          window.confirm("¿Estás seguro de que deseas eliminar este grupo?")
+          window.confirm(
+            `¿Estás seguro de que deseas eliminar el grupo "${this.group.label}"?`,
+          )
         ) {
           this.eventBus.emit("group:delete", { id: this.group.id });
         }
