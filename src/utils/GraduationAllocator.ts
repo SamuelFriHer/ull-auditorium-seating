@@ -164,9 +164,7 @@ export class GraduationAllocator {
       const count = (labelCounts.get(prefix) || 0) + 1;
       labelCounts.set(prefix, count);
 
-      const id = `graduation_guest_${poolKey}_group_${Date.now()}_${Math.floor(
-        Math.random() * 1000,
-      )}_${groups.length}`;
+      const id: string = `graduation_guest_${poolKey}_group_${crypto.randomUUID()}`;
       const provisionalLabel = `${prefix} ${count}`;
       const seatIds = chunk.map((s: Seat): string => s.id);
 

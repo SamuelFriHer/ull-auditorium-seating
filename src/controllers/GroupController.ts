@@ -37,8 +37,8 @@ export class GroupController {
     const defaultColor = this.colorUtils.generateColor(
       this.state.venue.groups.length,
     );
-    const resolvedColor = color || defaultColor;
-    const generatedId = `group_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    const resolvedColor: string = color || defaultColor;
+    const generatedId: string = `group_${crypto.randomUUID()}`;
 
     const group = new SeatGroup(generatedId, label, resolvedColor, []);
     this.state.venue.groups.push(group);
