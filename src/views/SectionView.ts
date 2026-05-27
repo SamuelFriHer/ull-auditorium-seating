@@ -114,6 +114,10 @@ export class SectionView implements IView {
     if (event.button !== 0) {
       return;
     }
+    const seat = this.section.getSeat(seatId);
+    if (!seat || seat.isDisabled) {
+      return;
+    }
 
     const target = event.target as SVGElement;
     try {
@@ -143,6 +147,10 @@ export class SectionView implements IView {
     const target = event.target as SVGElement;
     const seatId = target.getAttribute("data-seat-id");
     if (seatId && seatId !== this.lastHoveredSeatId) {
+      const seat = this.section.getSeat(seatId);
+      if (!seat || seat.isDisabled) {
+        return;
+      }
       this.hasDragged = true;
       this.lastHoveredSeatId = seatId;
       this.eventBus.emit("seat:drag-over", { seatId });

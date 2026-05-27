@@ -35,7 +35,12 @@ export class SelectionController {
    */
   public onSeatClick(seatId: string): void {
     const seat = this.state.venue.getSeat(seatId);
-    if (!seat) {
+    if (!seat || seat.isDisabled) {
+      return;
+    }
+
+    if (this.state.isOrlaMode) {
+      this.handleOrlaSeatClick(seatId);
       return;
     }
 
@@ -51,13 +56,38 @@ export class SelectionController {
   }
 
   /**
+   * Special click handling for guest groups in Orla Mode.
+   */
+  private handleOrlaSeatClick(seatId: string): void {
+    const group = this.state.orlaGuestGroups.find((g) =>
+      g.seatIds.includes(seatId),
+    );
+    if (!group) {
+      return;
+    }
+
+    const isSelected = this.state.selectedSeatIds.includes(seatId);
+    if (isSelected) {
+      this.state.selectedSeatIds = [];
+      this.eventBus.emit("orla:guest-group-select", { groupId: null });
+    } else {
+      this.state.selectedSeatIds = [...group.seatIds];
+      this.eventBus.emit("orla:guest-group-select", { groupId: group.id });
+    }
+    this.eventBus.emit("venue:updated");
+  }
+
+  /**
    * Prepares the controller state when a seat drag interaction starts.
    *
    * @param seatId - The identifier of the seat where the drag started.
    */
   public onDragStart(seatId: string): void {
+    if (this.state.isOrlaMode) {
+      return;
+    }
     const seat = this.state.venue.getSeat(seatId);
-    if (!seat) {
+    if (!seat || seat.isDisabled) {
       return;
     }
 
@@ -73,12 +103,15 @@ export class SelectionController {
    * @param seatId - The identifier of the seat currently dragged over.
    */
   public onDragOver(seatId: string): void {
+    if (this.state.isOrlaMode) {
+      return;
+    }
     if (!this.dragStartSeatId) {
       return;
     }
 
     const seat = this.state.venue.getSeat(seatId);
-    if (!seat) {
+    if (!seat || seat.isDisabled) {
       return;
     }
 

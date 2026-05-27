@@ -6,6 +6,7 @@ import type { SeatGroup } from "../models/SeatGroup";
 import { SectionView } from "./SectionView";
 import { SeatView } from "./SeatView";
 import type { IView } from "./IView";
+import { OrlaAllocator } from "../utils/OrlaAllocator";
 import {
   getSectionIdsForFloor,
   calculateVenueViewBox,
@@ -100,19 +101,14 @@ export class VenueView implements IView {
    * @param svg - The parent SVG element container.
    */
   private renderSections(sections: Section[], svg: SVGElement): void {
-    sections.forEach((section: Section): void => {
-      const sectionView: SectionView = new SectionView(
-        section,
-        svg,
-        this.eventBus,
-      );
-      sectionView.render();
-      this.sectionViews.set(section.id, sectionView);
-
-      section.seats.forEach((seat: Seat): void => {
-        const seatView: SeatView | null = sectionView.getSeatView(seat.id);
-        if (seatView) {
-          this.seatViews.set(seat.id, seatView);
+    sections.forEach((sec: Section): void => {
+      const view = new SectionView(sec, svg, this.eventBus);
+      view.render();
+      this.sectionViews.set(sec.id, view);
+      sec.seats.forEach((s) => {
+        const sv = view.getSeatView(s.id);
+        if (sv) {
+          this.seatViews.set(s.id, sv);
         }
       });
     });
@@ -135,13 +131,7 @@ export class VenueView implements IView {
     this.eventBus.off("venue:updated", this.onVenueUpdated);
     this.eventBus.off("venue:loaded", this.onVenueLoaded);
     this.eventBus.off("floor:change", this.onFloorChanged);
-
-    this.sectionViews.forEach((view: SectionView): void => {
-      view.destroy();
-    });
-    this.sectionViews.clear();
-    this.seatViews.clear();
-    this.container.innerHTML = "";
+    this.clearViews();
   }
 
   /**
@@ -153,25 +143,56 @@ export class VenueView implements IView {
     this.eventBus.on("floor:change", this.onFloorChanged);
   }
 
-  /**
-   * Synchronizes select and color states on all rendered seat elements.
-   */
   private updateSeatStates(): void {
     const selectedSet: Set<string> = new Set(this.state.selectedSeatIds);
-    const groupColorMap: Map<string, string> = new Map();
+    if (this.state.isOrlaMode) {
+      this.updateOrlaSeatStates(selectedSet);
+      return;
+    }
 
+    const groupColorMap: Map<string, string> = new Map();
     this.state.venue.groups.forEach((group: SeatGroup): void => {
       groupColorMap.set(group.id, group.color);
     });
 
     this.seatViews.forEach((seatView: SeatView, seatId: string): void => {
       seatView.setSelected(selectedSet.has(seatId));
-
       const seat: Seat = seatView.getSeat();
-      const groupColor: string | null = seat.groupId
+      const color: string | null = seat.groupId
         ? groupColorMap.get(seat.groupId) || null
         : null;
-      seatView.setGroupColor(groupColor);
+      seatView.setGroupColor(color);
+    });
+  }
+
+  /**
+   * Synchronizes seat elements when Orla Mode is active.
+   */
+  private updateOrlaSeatStates(selectedSet: Set<string>): void {
+    const venue = this.state.venue;
+    const teachers = new Set(OrlaAllocator.getTeacherSeatIds(venue));
+    const students = new Set(
+      OrlaAllocator.getStudentSeatIds(venue, this.state.orlaStudentCount),
+    );
+    const guestColors = new Map<string, string>();
+
+    this.state.orlaGuestGroups.forEach((g): void => {
+      const col = g.isOccupied
+        ? "var(--color-orla-guest-occupied)"
+        : "var(--color-orla-guest-free)";
+      g.seatIds.forEach((id): void => {
+        guestColors.set(id, col);
+      });
+    });
+
+    this.seatViews.forEach((view: SeatView, id: string): void => {
+      view.setSelected(selectedSet.has(id));
+      const col = teachers.has(id)
+        ? "var(--color-orla-teacher)"
+        : students.has(id)
+          ? "var(--color-orla-student)"
+          : guestColors.get(id) || null;
+      view.setGroupColor(col);
     });
   }
 

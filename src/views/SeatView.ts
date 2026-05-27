@@ -47,6 +47,9 @@ export class SeatView implements IView {
     this.isSelected = null;
     this.currentGroupColor = null;
     this.element.setAttribute("class", "seat");
+    if (this.seat.isDisabled) {
+      this.element.classList.add("disabled");
+    }
     this.element.setAttribute("x", this.seat.x.toString());
     this.element.setAttribute("y", this.seat.y.toString());
     this.element.setAttribute("width", "18");
@@ -65,7 +68,8 @@ export class SeatView implements IView {
         : this.seat.row === "Even"
           ? "Par"
           : this.seat.row;
-    title.textContent = `Fila ${rowLabel}, Asiento ${this.seat.number}`;
+    const disabledSuffix = this.seat.isDisabled ? " (No utilizable)" : "";
+    title.textContent = `Fila ${rowLabel}, Asiento ${this.seat.number}${disabledSuffix}`;
     this.element.appendChild(title);
   }
 
