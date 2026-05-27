@@ -16,6 +16,8 @@ export class Seat {
   public readonly y: number;
   /** The ID of the group this seat is assigned to, or null if unassigned. */
   public groupId: string | null;
+  /** Whether the seat is structurally disabled. */
+  public readonly isDisabled: boolean;
 
   /**
    * Constructs a new Seat instance.
@@ -44,5 +46,26 @@ export class Seat {
     this.x = x;
     this.y = y;
     this.groupId = groupId;
+    this.isDisabled = Seat.checkDisabled(sectionId, row, number);
+  }
+
+  /**
+   * Checks if a seat is structurally disabled in the Paraninfo venue.
+   */
+  private static checkDisabled(
+    sectionId: string,
+    row: string,
+    num: number,
+  ): boolean {
+    if (sectionId !== "stalls") {
+      return false;
+    }
+    if (row === "B" && (num === 21 || num === 22)) {
+      return true;
+    }
+    if ((row === "C" || row === "D") && (num === 23 || num === 24)) {
+      return true;
+    }
+    return false;
   }
 }
