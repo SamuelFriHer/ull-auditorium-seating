@@ -1,5 +1,5 @@
-import type { IView } from "./IView";
-import pkg from "../../package.json";
+import type { IView } from "../IView";
+import pkg from "../../../package.json";
 
 /**
  * Renders the application footer containing version and legal links.

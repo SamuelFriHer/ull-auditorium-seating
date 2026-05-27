@@ -1,6 +1,6 @@
-import type { AppState } from "../models/AppState";
-import type { EventBus } from "../events/EventBus";
-import type { OrlaGuestGroup } from "../models/OrlaGuestGroup";
+import type { AppState } from "../../models/AppState";
+import type { EventBus } from "../../events/EventBus";
+import type { OrlaGuestGroup } from "../../models/OrlaGuestGroup";
 
 /**
  * Component for rendering the list of guest groups in Orla mode.

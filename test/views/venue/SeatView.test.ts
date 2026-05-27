@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { SeatView } from "../../src/views/SeatView";
-import { Seat } from "../../src/models/Seat";
+import { SeatView } from "../../../src/views/venue/SeatView";
+import { Seat } from "../../../src/models/Seat";
 
 /**
  * Mock representation of an SVG Element for testing in a Node environment.

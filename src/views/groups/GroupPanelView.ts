@@ -1,8 +1,8 @@
-import type { AppState } from "../models/AppState";
-import type { SeatGroup } from "../models/SeatGroup";
-import type { EventBus } from "../events/EventBus";
-import { ColorUtils } from "../utils/ColorUtils";
-import type { IView } from "./IView";
+import type { AppState } from "../../models/AppState";
+import type { SeatGroup } from "../../models/SeatGroup";
+import type { EventBus } from "../../events/EventBus";
+import { ColorUtils } from "../../utils/ColorUtils";
+import type { IView } from "../IView";
 import { GroupItemView } from "./GroupItemView";
 
 /**

@@ -1,6 +1,6 @@
-import type { AppState } from "../models/AppState";
-import type { EventBus } from "../events/EventBus";
-import type { IView } from "./IView";
+import type { AppState } from "../../models/AppState";
+import type { EventBus } from "../../events/EventBus";
+import type { IView } from "../IView";
 
 /**
  * Renders the top toolbar containing action buttons and the floor selector.

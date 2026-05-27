@@ -1,4 +1,4 @@
-import type { AppState } from "../models/AppState";
+import type { AppState } from "../../models/AppState";
 
 /**
  * Component for rendering and handling the Orla student/guest inputs.

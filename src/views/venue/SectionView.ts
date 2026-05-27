@@ -1,7 +1,7 @@
-import type { Section } from "../models/Section";
-import type { EventBus } from "../events/EventBus";
+import type { Section } from "../../models/Section";
+import type { EventBus } from "../../events/EventBus";
 import { SeatView } from "./SeatView";
-import type { IView } from "./IView";
+import type { IView } from "../IView";
 
 /**
  * Renders an auditorium section and handles seat pointer interactions (clicks/drags).

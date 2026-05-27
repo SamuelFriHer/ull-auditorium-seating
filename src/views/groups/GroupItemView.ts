@@ -1,6 +1,6 @@
-import type { SeatGroup } from "../models/SeatGroup";
-import type { AppState } from "../models/AppState";
-import type { EventBus } from "../events/EventBus";
+import type { SeatGroup } from "../../models/SeatGroup";
+import type { AppState } from "../../models/AppState";
+import type { EventBus } from "../../events/EventBus";
 
 /**
  * Handles rendering and event interactions for a single seat group item.

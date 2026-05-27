@@ -1,5 +1,5 @@
-import type { Seat } from "../models/Seat";
-import type { IView } from "./IView";
+import type { Seat } from "../../models/Seat";
+import type { IView } from "../IView";
 
 /**
  * Handles rendering and interactive states of a single seat in the SVG layout.

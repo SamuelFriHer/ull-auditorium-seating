@@ -1,5 +1,5 @@
-import type { AppState } from "../models/AppState";
-import type { OrlaGuestGroup } from "../models/OrlaGuestGroup";
+import type { AppState } from "../../models/AppState";
+import type { OrlaGuestGroup } from "../../models/OrlaGuestGroup";
 
 /**
  * Component for rendering the detail card of a selected OrlaGuestGroup.

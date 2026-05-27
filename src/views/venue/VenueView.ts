@@ -1,15 +1,15 @@
-import type { AppState } from "../models/AppState";
-import type { Section } from "../models/Section";
-import type { EventBus } from "../events/EventBus";
-import type { Seat } from "../models/Seat";
+import type { AppState } from "../../models/AppState";
+import type { Section } from "../../models/Section";
+import type { EventBus } from "../../events/EventBus";
+import type { Seat } from "../../models/Seat";
 import { SectionView } from "./SectionView";
 import { SeatView } from "./SeatView";
-import type { IView } from "./IView";
-import { SeatColorResolver } from "../utils/SeatColorResolver";
+import type { IView } from "../IView";
+import { SeatColorResolver } from "../../utils/SeatColorResolver";
 import {
   getSectionIdsForFloor,
   calculateVenueViewBox,
-} from "../utils/LayoutUtils";
+} from "../../utils/LayoutUtils";
 
 /**
  * Renders the entire auditorium seating map based on the active floor.

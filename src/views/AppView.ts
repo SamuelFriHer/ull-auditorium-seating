@@ -1,10 +1,10 @@
 import type { AppState } from "../models/AppState";
 import type { EventBus } from "../events/EventBus";
-import { ToolbarView } from "./ToolbarView";
-import { VenueView } from "./VenueView";
-import { GroupPanelView } from "./GroupPanelView";
-import { OrlaPanelView } from "./OrlaPanelView";
-import { FooterView } from "./FooterView";
+import { ToolbarView } from "./layout/ToolbarView";
+import { VenueView } from "./venue/VenueView";
+import { GroupPanelView } from "./groups/GroupPanelView";
+import { OrlaPanelView } from "./orla/OrlaPanelView";
+import { FooterView } from "./layout/FooterView";
 import type { IView } from "./IView";
 
 /**

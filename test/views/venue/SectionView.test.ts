@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { SectionView } from "../../src/views/SectionView";
-import { Section } from "../../src/models/Section";
-import { Seat } from "../../src/models/Seat";
-import { SectionType } from "../../src/types";
-import { EventBus } from "../../src/events/EventBus";
+import { SectionView } from "../../../src/views/venue/SectionView";
+import { Section } from "../../../src/models/Section";
+import { Seat } from "../../../src/models/Seat";
+import { SectionType } from "../../../src/types";
+import { EventBus } from "../../../src/events/EventBus";
 
 /** Mock class simulating SVG elements to run view tests without a real browser DOM. */
 class MockSVGElement {

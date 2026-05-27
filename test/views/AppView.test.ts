@@ -3,7 +3,7 @@ import { AppView } from "../../src/views/AppView";
 import { AppState } from "../../src/models/AppState";
 import { EventBus } from "../../src/events/EventBus";
 
-vi.mock("../../src/views/ToolbarView", () => {
+vi.mock("../../src/views/layout/ToolbarView", () => {
   return {
     ToolbarView: class {
       public render = vi.fn();
@@ -12,7 +12,7 @@ vi.mock("../../src/views/ToolbarView", () => {
   };
 });
 
-vi.mock("../../src/views/VenueView", () => {
+vi.mock("../../src/views/venue/VenueView", () => {
   return {
     VenueView: class {
       public render = vi.fn();
@@ -21,7 +21,7 @@ vi.mock("../../src/views/VenueView", () => {
   };
 });
 
-vi.mock("../../src/views/GroupPanelView", () => {
+vi.mock("../../src/views/groups/GroupPanelView", () => {
   return {
     GroupPanelView: class {
       public render = vi.fn();
@@ -30,7 +30,7 @@ vi.mock("../../src/views/GroupPanelView", () => {
   };
 });
 
-vi.mock("../../src/views/FooterView", () => {
+vi.mock("../../src/views/layout/FooterView", () => {
   return {
     FooterView: class {
       public render = vi.fn();
