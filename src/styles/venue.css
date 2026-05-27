@@ -31,6 +31,14 @@
   z-index: 5;
 }
 
+.seat.disabled {
+  fill: hsl(222, 10%, 25%) !important;
+  stroke: hsl(222, 10%, 35%) !important;
+  opacity: 0.35;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
 .seat.selected {
   fill: var(--color-accent) !important;
   stroke: var(--text-primary);
