@@ -1,6 +1,8 @@
 import type { VenueJSON, SeatGroupJSON } from "../types";
 import { Venue } from "./Venue";
 import { SeatGroup } from "./SeatGroup";
+import { AppState } from "./AppState";
+import { OrlaAllocator } from "../utils/OrlaAllocator";
 import { VenueDefinitionLoader } from "../utils/VenueDefinitionLoader";
 
 /**
@@ -13,7 +15,10 @@ export class VenueSerializer {
    * @param venue - The Venue instance to serialize.
    * @returns The serialized VenueJSON representation.
    */
-  public static toJSON(venue: Venue): VenueJSON {
+  public static toJSON(venue: Venue, state?: AppState): VenueJSON {
+    if (state && state.isOrlaMode) {
+      return VenueSerializer.serializeOrla(venue, state);
+    }
     return {
       id: venue.id,
       name: venue.name,
@@ -25,6 +30,52 @@ export class VenueSerializer {
           seatIds: [...group.seatIds],
         }),
       ),
+    };
+  }
+
+  /**
+   * Helper to serialize Orla Mode virtual groups.
+   */
+  private static serializeOrla(venue: Venue, state: AppState): VenueJSON {
+    const teachers = OrlaAllocator.getTeacherSeatIds(venue);
+    const students = OrlaAllocator.getStudentSeatIds(
+      venue,
+      state.orlaStudentCount,
+    );
+    const groups: SeatGroupJSON[] = [];
+
+    if (teachers.length > 0) {
+      groups.push({
+        id: "orla_teachers",
+        label: "Docentes",
+        color: "#10B981",
+        seatIds: teachers,
+      });
+    }
+    if (students.length > 0) {
+      groups.push({
+        id: "orla_students",
+        label: "Estudiantes",
+        color: "#F59E0B",
+        seatIds: students,
+      });
+    }
+
+    state.orlaGuestGroups.forEach((g): void => {
+      if (g.seatIds.length > 0) {
+        groups.push({
+          id: g.id,
+          label: g.label,
+          color: g.isOccupied ? "#EF4444" : "#3B82F6",
+          seatIds: [...g.seatIds],
+        });
+      }
+    });
+
+    return {
+      id: venue.id,
+      name: venue.name,
+      groups,
     };
   }
 
@@ -61,8 +112,12 @@ export class VenueSerializer {
    * @param venue - The Venue instance to download.
    * @param filename - The target filename for download.
    */
-  public static download(venue: Venue, filename: string): void {
-    const json = VenueSerializer.toJSON(venue);
+  public static download(
+    venue: Venue,
+    filename: string,
+    state?: AppState,
+  ): void {
+    const json = VenueSerializer.toJSON(venue, state);
     const blob = new Blob([JSON.stringify(json, null, 2)], {
       type: "application/json",
     });

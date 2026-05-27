@@ -28,7 +28,7 @@ export class ExportController {
    */
   public exportToJSON(): void {
     const filename = `${this.state.venue.id}_layout.json`;
-    VenueSerializer.download(this.state.venue, filename);
+    VenueSerializer.download(this.state.venue, filename, this.state);
   }
 
   /**

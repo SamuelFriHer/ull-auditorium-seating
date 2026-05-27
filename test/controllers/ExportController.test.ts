@@ -75,6 +75,7 @@ describe("ExportController - ZOMBIES", (): void => {
       expect(downloadSpy).toHaveBeenCalledWith(
         state.venue,
         "auditorium_ull_layout.json",
+        state,
       );
     });
 
