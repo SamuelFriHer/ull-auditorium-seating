@@ -89,5 +89,17 @@ describe("ColorUtils - ZOMBIES", (): void => {
         ColorUtils.hexToRgb("xyzxyz");
       }).toThrow("Invalid hex color characters");
     });
+
+    it("should throw an error for trailing invalid characters", (): void => {
+      expect((): void => {
+        ColorUtils.hexToRgb("00000G");
+      }).toThrow("Invalid hex color characters");
+    });
+
+    it("should throw an error for hex strings with invalid characters in 3-char format", (): void => {
+      expect((): void => {
+        ColorUtils.hexToRgb("ffg");
+      }).toThrow("Invalid hex color characters");
+    });
   });
 });

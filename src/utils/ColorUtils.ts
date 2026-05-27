@@ -50,6 +50,11 @@ export class ColorUtils {
       throw new Error(`Invalid hex color length: ${hex}`);
     }
 
+    const hexPattern: RegExp = /^[0-9a-fA-F]{6}$/;
+    if (!hexPattern.test(cleanHex)) {
+      throw new Error(`Invalid hex color characters: ${hex}`);
+    }
+
     const num: number = parseInt(cleanHex, 16);
     if (isNaN(num)) {
       throw new Error(`Invalid hex color characters: ${hex}`);
