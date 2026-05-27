@@ -18,7 +18,9 @@ describe("GraduationAllocator - ZOMBIES", (): void => {
       const seats = [new Seat("stalls-B-1", "B", 1, "stalls", 0, 0)];
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
-      expect(GraduationAllocator.allocateGuestGroups(venue, [], [], 0)).toEqual([]);
+      expect(GraduationAllocator.allocateGuestGroups(venue, [], [], 0)).toEqual(
+        [],
+      );
     });
 
     it("should return empty array for teachers when stalls section has no seats", (): void => {

@@ -100,7 +100,9 @@ export class GraduationPanelView implements IView {
     if (btnToggle) {
       const group = this.getSelectedGroup();
       if (group) {
-        this.eventBus.emit("graduation:guest-group-toggle", { groupId: group.id });
+        this.eventBus.emit("graduation:guest-group-toggle", {
+          groupId: group.id,
+        });
       }
     }
   }
@@ -113,7 +115,9 @@ export class GraduationPanelView implements IView {
         keyboardEvent.preventDefault();
         const group = this.getSelectedGroup();
         if (group) {
-          this.eventBus.emit("graduation:guest-group-toggle", { groupId: group.id });
+          this.eventBus.emit("graduation:guest-group-toggle", {
+            groupId: group.id,
+          });
         }
       }
     }
@@ -175,7 +179,9 @@ export class GraduationPanelView implements IView {
     }
   }
 
-  private renderSubComponents(selectedGroup: GraduationGuestGroup | null): void {
+  private renderSubComponents(
+    selectedGroup: GraduationGuestGroup | null,
+  ): void {
     if (!this.groupsListView) this.initSubComponents();
     this.groupsListView?.render(selectedGroup);
   }

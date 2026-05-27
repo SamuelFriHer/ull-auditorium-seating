@@ -61,7 +61,9 @@ export class GraduationController {
    * Toggles a guest group's occupied status.
    */
   public handleGuestGroupToggle(groupId: string): void {
-    const group = this.state.graduationGuestGroups.find((g) => g.id === groupId);
+    const group = this.state.graduationGuestGroups.find(
+      (g) => g.id === groupId,
+    );
     if (group) {
       if (!group.isOccupied) {
         group.isOccupied = true;
@@ -77,7 +79,9 @@ export class GraduationController {
    * Updates a guest group's custom label.
    */
   public handleGuestGroupLabelChange(groupId: string, label: string): void {
-    const group = this.state.graduationGuestGroups.find((g) => g.id === groupId);
+    const group = this.state.graduationGuestGroups.find(
+      (g) => g.id === groupId,
+    );
     if (group) {
       group.customLabel = label.trim() || null;
       this.eventBus.emit("venue:updated");
@@ -113,7 +117,9 @@ export class GraduationController {
    */
   public handleGuestGroupSelect(groupId: string | null): void {
     if (groupId) {
-      const group = this.state.graduationGuestGroups.find((g) => g.id === groupId);
+      const group = this.state.graduationGuestGroups.find(
+        (g) => g.id === groupId,
+      );
       this.state.selectedSeatIds = group ? [...group.seatIds] : [];
     } else {
       this.state.selectedSeatIds = [];

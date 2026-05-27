@@ -51,7 +51,9 @@ export class GraduationGroupsListView {
 
     const info = item.querySelector(".group-info");
     info?.addEventListener("click", (): void => {
-      this.eventBus.emit("graduation:guest-group-select", { groupId: group.id });
+      this.eventBus.emit("graduation:guest-group-select", {
+        groupId: group.id,
+      });
     });
 
     return item;

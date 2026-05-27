@@ -67,11 +67,12 @@ export class SeatColorResolver {
     GraduationAllocator.getTeacherSeatIds(venue).forEach((id: string): void => {
       this.teacherSeats.add(id);
     });
-    GraduationAllocator.getStudentSeatIds(venue, state.graduationStudentCount).forEach(
-      (id: string): void => {
-        this.studentSeats.add(id);
-      },
-    );
+    GraduationAllocator.getStudentSeatIds(
+      venue,
+      state.graduationStudentCount,
+    ).forEach((id: string): void => {
+      this.studentSeats.add(id);
+    });
     state.graduationGuestGroups.forEach((group: GraduationGuestGroup): void => {
       const color: string = group.isOccupied
         ? "var(--color-graduation-guest-occupied)"

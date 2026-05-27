@@ -69,7 +69,9 @@ export class GraduationDetailCardView {
       status.className = `status-indicator ${group.isOccupied ? "occupied" : "free"}`;
       status.textContent = group.isOccupied ? "Ocupado" : "Libre";
     }
-    const input = card.querySelector("#graduation-group-label") as HTMLInputElement;
+    const input = card.querySelector(
+      "#graduation-group-label",
+    ) as HTMLInputElement;
     if (input && document.activeElement !== input) {
       input.value = group.customLabel || "";
     }

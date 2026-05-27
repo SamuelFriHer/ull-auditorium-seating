@@ -72,7 +72,9 @@ export class SelectionController {
       this.eventBus.emit("graduation:guest-group-select", { groupId: null });
     } else {
       this.state.selectedSeatIds = [...group.seatIds];
-      this.eventBus.emit("graduation:guest-group-select", { groupId: group.id });
+      this.eventBus.emit("graduation:guest-group-select", {
+        groupId: group.id,
+      });
     }
     this.eventBus.emit("venue:updated");
   }

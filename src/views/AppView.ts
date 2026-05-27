@@ -34,7 +34,8 @@ export class AppView implements IView {
     this.container = container;
     this.state = state;
     this.eventBus = eventBus;
-    this.onGraduationToggle = (payload): void => this.swapSidebar(payload.active);
+    this.onGraduationToggle = (payload): void =>
+      this.swapSidebar(payload.active);
     this.eventBus.on("graduation:toggle", this.onGraduationToggle);
   }
 

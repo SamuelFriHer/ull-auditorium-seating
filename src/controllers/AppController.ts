@@ -35,7 +35,10 @@ export class AppController {
     );
     this.groupController = new GroupController(this.state, this.eventBus);
     this.exportController = new ExportController(this.state, this.eventBus);
-    this.graduationController = new GraduationController(this.state, this.eventBus);
+    this.graduationController = new GraduationController(
+      this.state,
+      this.eventBus,
+    );
     this.appView = new AppView(container, this.state, this.eventBus);
   }
 

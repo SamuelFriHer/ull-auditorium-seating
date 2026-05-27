@@ -70,7 +70,9 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
       ];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[3];
-      expect(resolver.resolveColor(seat)).toBe("var(--color-graduation-guest-free)");
+      expect(resolver.resolveColor(seat)).toBe(
+        "var(--color-graduation-guest-free)",
+      );
     });
   });
 
@@ -147,7 +149,9 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
       state.isGraduationMode = true;
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[0];
-      expect(resolver.resolveColor(seat)).toBe("var(--color-graduation-teacher)");
+      expect(resolver.resolveColor(seat)).toBe(
+        "var(--color-graduation-teacher)",
+      );
     });
   });
 });
