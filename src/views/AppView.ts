@@ -3,6 +3,7 @@ import type { EventBus } from "../events/EventBus";
 import { ToolbarView } from "./ToolbarView";
 import { VenueView } from "./VenueView";
 import { GroupPanelView } from "./GroupPanelView";
+import { OrlaPanelView } from "./OrlaPanelView";
 import { FooterView } from "./FooterView";
 import type { IView } from "./IView";
 
@@ -17,7 +18,10 @@ export class AppView implements IView {
   private toolbarView: ToolbarView | undefined;
   private venueView: VenueView | undefined;
   private groupPanelView: GroupPanelView | undefined;
+  private orlaPanelView: OrlaPanelView | undefined;
   private footerView: FooterView | undefined;
+
+  private readonly onOrlaToggle: (payload: { active: boolean }) => void;
 
   /**
    * Initializes a new AppView instance.
@@ -30,6 +34,8 @@ export class AppView implements IView {
     this.container = container;
     this.state = state;
     this.eventBus = eventBus;
+    this.onOrlaToggle = (payload): void => this.swapSidebar(payload.active);
+    this.eventBus.on("orla:toggle", this.onOrlaToggle);
   }
 
   /**
@@ -53,9 +59,6 @@ export class AppView implements IView {
     const venueContainer = this.container.querySelector(
       "#app-venue-container",
     ) as HTMLElement;
-    const sidebarContainer = this.container.querySelector(
-      "#app-sidebar-container",
-    ) as HTMLElement;
     const footerContainer = this.container.querySelector(
       "#app-footer-container",
     ) as HTMLElement;
@@ -66,17 +69,46 @@ export class AppView implements IView {
       this.eventBus,
     );
     this.venueView = new VenueView(venueContainer, this.state, this.eventBus);
-    this.groupPanelView = new GroupPanelView(
-      sidebarContainer,
-      this.state,
-      this.eventBus,
-    );
     this.footerView = new FooterView(footerContainer);
 
     this.toolbarView.render();
     this.venueView.render();
-    this.groupPanelView.render();
     this.footerView.render();
+
+    this.swapSidebar(this.state.isOrlaMode);
+  }
+
+  /**
+   * Swaps the active sidebar panel between Group management and Orla configuration.
+   */
+  private swapSidebar(active: boolean): void {
+    const sidebarContainer = this.container.querySelector(
+      "#app-sidebar-container",
+    ) as HTMLElement;
+    if (!sidebarContainer) {
+      return;
+    }
+
+    this.groupPanelView?.destroy();
+    this.groupPanelView = undefined;
+    this.orlaPanelView?.destroy();
+    this.orlaPanelView = undefined;
+
+    if (active) {
+      this.orlaPanelView = new OrlaPanelView(
+        sidebarContainer,
+        this.state,
+        this.eventBus,
+      );
+      this.orlaPanelView.render();
+    } else {
+      this.groupPanelView = new GroupPanelView(
+        sidebarContainer,
+        this.state,
+        this.eventBus,
+      );
+      this.groupPanelView.render();
+    }
   }
 
   /**
@@ -104,14 +136,17 @@ export class AppView implements IView {
    * Cleans up all child view nodes and empties the main container.
    */
   public destroy(): void {
+    this.eventBus.off("orla:toggle", this.onOrlaToggle);
     this.toolbarView?.destroy();
     this.venueView?.destroy();
     this.groupPanelView?.destroy();
+    this.orlaPanelView?.destroy();
     this.footerView?.destroy();
 
     this.toolbarView = undefined;
     this.venueView = undefined;
     this.groupPanelView = undefined;
+    this.orlaPanelView = undefined;
     this.footerView = undefined;
 
     this.container.innerHTML = "";
