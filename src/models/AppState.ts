@@ -1,5 +1,6 @@
 import { SelectionMode } from "../types";
 import { Venue } from "./Venue";
+import { OrlaGuestGroup } from "./OrlaGuestGroup";
 
 /**
  * Manages the global state of the application.
@@ -15,6 +16,17 @@ export class AppState {
   public selectionMode: SelectionMode;
   /** The currently active floor (0, 1, or 2). */
   public activeFloor: number;
+
+  /** Whether Orla Mode is active. */
+  public isOrlaMode: boolean;
+  /** Number of students participating in the Orla event. */
+  public orlaStudentCount: number;
+  /** Number of guest invitations allocated per student. */
+  public orlaGuestCountPerStudent: number;
+  /** List of dynamically generated guest invitation groups. */
+  public orlaGuestGroups: OrlaGuestGroup[];
+  /** Maximum number of guest invitations allowed per student. */
+  public orlaMaxGuests: number;
 
   /**
    * Constructs a new AppState instance.
@@ -37,5 +49,11 @@ export class AppState {
     this.activeGroupId = activeGroupId;
     this.selectionMode = selectionMode;
     this.activeFloor = activeFloor;
+
+    this.isOrlaMode = false;
+    this.orlaStudentCount = 0;
+    this.orlaGuestCountPerStudent = 0;
+    this.orlaGuestGroups = [];
+    this.orlaMaxGuests = 0;
   }
 }

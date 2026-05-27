@@ -3,6 +3,7 @@ import { EventBus } from "../events/EventBus";
 import { SelectionController } from "./SelectionController";
 import { GroupController } from "./GroupController";
 import { ExportController } from "./ExportController";
+import { OrlaController } from "./OrlaController";
 import { AppView } from "../views/AppView";
 import { VenueDefinitionLoader } from "../utils/VenueDefinitionLoader";
 
@@ -15,6 +16,7 @@ export class AppController {
   private readonly selectionController: SelectionController;
   private readonly groupController: GroupController;
   private readonly exportController: ExportController;
+  private readonly orlaController: OrlaController;
   private readonly appView: AppView;
 
   /**
@@ -33,6 +35,7 @@ export class AppController {
     );
     this.groupController = new GroupController(this.state, this.eventBus);
     this.exportController = new ExportController(this.state, this.eventBus);
+    this.orlaController = new OrlaController(this.state, this.eventBus);
     this.appView = new AppView(container, this.state, this.eventBus);
   }
 

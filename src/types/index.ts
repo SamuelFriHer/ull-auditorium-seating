@@ -95,6 +95,12 @@ export interface EventPayloadMap {
   "venue:export": void;
   "venue:import": { file: File };
   "floor:change": { floor: number };
+  "orla:toggle": { active: boolean };
+  "orla:students-change": { count: number };
+  "orla:guests-change": { count: number };
+  "orla:guest-group-toggle": { groupId: string };
+  "orla:guest-group-label-change": { groupId: string; label: string };
+  "orla:guest-group-select": { groupId: string | null };
 }
 
 /**
