@@ -1,6 +1,6 @@
 import { SelectionMode } from "../types";
 import { Venue } from "./Venue";
-import { OrlaGuestGroup } from "./OrlaGuestGroup";
+import { GraduationGuestGroup } from "./GraduationGuestGroup";
 
 /**
  * Manages the global state of the application.
@@ -17,16 +17,16 @@ export class AppState {
   /** The currently active floor (0, 1, or 2). */
   public activeFloor: number;
 
-  /** Whether Orla Mode is active. */
-  public isOrlaMode: boolean;
-  /** Number of students participating in the Orla event. */
-  public orlaStudentCount: number;
+  /** Whether Graduation Mode is active. */
+  public isGraduationMode: boolean;
+  /** Number of students participating in the Graduation event. */
+  public graduationStudentCount: number;
   /** Number of guest invitations allocated per student. */
-  public orlaGuestCountPerStudent: number;
+  public graduationGuestCountPerStudent: number;
   /** List of dynamically generated guest invitation groups. */
-  public orlaGuestGroups: OrlaGuestGroup[];
+  public graduationGuestGroups: GraduationGuestGroup[];
   /** Maximum number of guest invitations allowed per student. */
-  public orlaMaxGuests: number;
+  public graduationMaxGuests: number;
 
   /**
    * Constructs a new AppState instance.
@@ -50,10 +50,10 @@ export class AppState {
     this.selectionMode = selectionMode;
     this.activeFloor = activeFloor;
 
-    this.isOrlaMode = false;
-    this.orlaStudentCount = 0;
-    this.orlaGuestCountPerStudent = 0;
-    this.orlaGuestGroups = [];
-    this.orlaMaxGuests = 0;
+    this.isGraduationMode = false;
+    this.graduationStudentCount = 0;
+    this.graduationGuestCountPerStudent = 0;
+    this.graduationGuestGroups = [];
+    this.graduationMaxGuests = 0;
   }
 }

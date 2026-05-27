@@ -1,7 +1,7 @@
 /**
- * Represents a group of guests associated with a student in Orla Mode.
+ * Represents a group of guests associated with a student in Graduation Mode.
  */
-export class OrlaGuestGroup {
+export class GraduationGuestGroup {
   /** Unique identifier of the guest group. */
   public readonly id: string;
   /** The provisional location-based label of the group. */
@@ -14,7 +14,7 @@ export class OrlaGuestGroup {
   public isOccupied: boolean;
 
   /**
-   * Constructs a new OrlaGuestGroup.
+   * Constructs a new GraduationGuestGroup.
    *
    * @param id - Unique identifier.
    * @param provisionalLabel - Provisional location-based label.

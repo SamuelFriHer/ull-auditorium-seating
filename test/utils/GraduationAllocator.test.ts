@@ -3,28 +3,28 @@ import { Seat } from "../../src/models/Seat";
 import { Section } from "../../src/models/Section";
 import { Venue } from "../../src/models/Venue";
 import { SectionType } from "../../src/types";
-import { OrlaAllocator } from "../../src/utils/OrlaAllocator";
+import { GraduationAllocator } from "../../src/utils/GraduationAllocator";
 
-describe("OrlaAllocator - ZOMBIES", (): void => {
+describe("GraduationAllocator - ZOMBIES", (): void => {
   describe("Z - Zero", (): void => {
     it("should return empty array for 0 students", (): void => {
       const seats = [new Seat("stalls-B-1", "B", 1, "stalls", 0, 0)];
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
-      expect(OrlaAllocator.getStudentSeatIds(venue, 0)).toEqual([]);
+      expect(GraduationAllocator.getStudentSeatIds(venue, 0)).toEqual([]);
     });
 
     it("should return empty array for 0 guests", (): void => {
       const seats = [new Seat("stalls-B-1", "B", 1, "stalls", 0, 0)];
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
-      expect(OrlaAllocator.allocateGuestGroups(venue, [], [], 0)).toEqual([]);
+      expect(GraduationAllocator.allocateGuestGroups(venue, [], [], 0)).toEqual([]);
     });
 
     it("should return empty array for teachers when stalls section has no seats", (): void => {
       const section = new Section("stalls", "Patio", SectionType.STALLS, []);
       const venue = new Venue("v1", "Venue", [section]);
-      expect(OrlaAllocator.getTeacherSeatIds(venue)).toEqual([]);
+      expect(GraduationAllocator.getTeacherSeatIds(venue)).toEqual([]);
     });
   });
 
@@ -36,7 +36,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       ];
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
-      expect(OrlaAllocator.getStudentSeatIds(venue, 1)).toEqual([
+      expect(GraduationAllocator.getStudentSeatIds(venue, 1)).toEqual([
         "stalls-B-1",
         "stalls-B-3",
       ]);
@@ -46,7 +46,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       const seats = [new Seat("stalls-B-2", "B", 2, "stalls", 0, 0)];
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
-      const groups = OrlaAllocator.allocateGuestGroups(venue, [], [], 1);
+      const groups = GraduationAllocator.allocateGuestGroups(venue, [], [], 1);
       expect(groups.length).toBe(1);
       expect(groups[0].seatIds).toEqual(["stalls-B-2"]);
     });
@@ -65,10 +65,10 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
 
-      const students2 = OrlaAllocator.getStudentSeatIds(venue, 2);
+      const students2 = GraduationAllocator.getStudentSeatIds(venue, 2);
       expect(students2).toEqual(["stalls-B-1", "stalls-B-3"]);
 
-      const students3 = OrlaAllocator.getStudentSeatIds(venue, 3);
+      const students3 = GraduationAllocator.getStudentSeatIds(venue, 3);
       expect(students3).toEqual([
         "stalls-B-1",
         "stalls-B-3",
@@ -91,7 +91,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       const teacherIds: string[] = [];
       const studentIds = ["stalls-B-1"];
 
-      const groups = OrlaAllocator.allocateGuestGroups(
+      const groups = GraduationAllocator.allocateGuestGroups(
         venue,
         teacherIds,
         studentIds,
@@ -142,7 +142,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       );
       const venue = new Venue("v1", "Venue", [section]);
 
-      const groups = OrlaAllocator.allocateGuestGroups(venue, [], [], 1);
+      const groups = GraduationAllocator.allocateGuestGroups(venue, [], [], 1);
       expect(groups.length).toBe(3);
       expect(groups[0].seatIds).toEqual(["lower_box-Odd-5"]);
       expect(groups[1].seatIds).toEqual(["lower_box-Odd-3"]);
@@ -164,7 +164,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       );
       const venue = new Venue("v1", "Venue", [section]);
 
-      const groups = OrlaAllocator.allocateGuestGroups(venue, [], [], 2);
+      const groups = GraduationAllocator.allocateGuestGroups(venue, [], [], 2);
       expect(groups.length).toBe(2);
       expect(groups[0].seatIds).toEqual([
         "amphitheater-A-3",
@@ -179,9 +179,9 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
 
   describe("I - Interface", (): void => {
     it("should possess required static allocation methods", (): void => {
-      expect(typeof OrlaAllocator.getTeacherSeatIds).toBe("function");
-      expect(typeof OrlaAllocator.getStudentSeatIds).toBe("function");
-      expect(typeof OrlaAllocator.allocateGuestGroups).toBe("function");
+      expect(typeof GraduationAllocator.getTeacherSeatIds).toBe("function");
+      expect(typeof GraduationAllocator.getStudentSeatIds).toBe("function");
+      expect(typeof GraduationAllocator.allocateGuestGroups).toBe("function");
     });
   });
 
@@ -193,8 +193,8 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
 
     it("should return empty arrays when stalls section is completely missing", (): void => {
       const venue = new Venue("v1", "Venue", []);
-      expect(OrlaAllocator.getTeacherSeatIds(venue)).toEqual([]);
-      expect(OrlaAllocator.getStudentSeatIds(venue, 5)).toEqual([]);
+      expect(GraduationAllocator.getTeacherSeatIds(venue)).toEqual([]);
+      expect(GraduationAllocator.getStudentSeatIds(venue, 5)).toEqual([]);
     });
   });
 
@@ -208,7 +208,7 @@ describe("OrlaAllocator - ZOMBIES", (): void => {
       const section = new Section("stalls", "Patio", SectionType.STALLS, seats);
       const venue = new Venue("v1", "Venue", [section]);
 
-      const teachers = OrlaAllocator.getTeacherSeatIds(venue);
+      const teachers = GraduationAllocator.getTeacherSeatIds(venue);
       expect(teachers).toEqual(["stalls-A-1", "stalls-A-2"]);
     });
   });

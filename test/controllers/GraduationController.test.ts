@@ -5,10 +5,10 @@ import { Seat } from "../../src/models/Seat";
 import { Section } from "../../src/models/Section";
 import { Venue } from "../../src/models/Venue";
 import { SectionType } from "../../src/types";
-import { OrlaController } from "../../src/controllers/OrlaController";
+import { GraduationController } from "../../src/controllers/GraduationController";
 
-describe("OrlaController Test Suite", (): void => {
-  it("should initialize Orla state and handle toggle actions", (): void => {
+describe("GraduationController Test Suite", (): void => {
+  it("should initialize Graduation state and handle toggle actions", (): void => {
     const seats = [
       new Seat("stalls-A-1", "A", 1, "stalls", 0, 0),
       new Seat("stalls-B-1", "B", 1, "stalls", 0, 0),
@@ -18,18 +18,18 @@ describe("OrlaController Test Suite", (): void => {
     const venue = new Venue("v1", "Venue", [section]);
     const state = new AppState(venue);
     const eventBus = new EventBus();
-    const controller = new OrlaController(state, eventBus);
+    const controller = new GraduationController(state, eventBus);
 
-    expect(state.isOrlaMode).toBe(false);
+    expect(state.isGraduationMode).toBe(false);
 
     // Toggle on
     controller.handleToggle(true);
-    expect(state.isOrlaMode).toBe(true);
+    expect(state.isGraduationMode).toBe(true);
 
     // Initial student and guest counts
-    expect(state.orlaStudentCount).toBe(0);
-    expect(state.orlaGuestCountPerStudent).toBe(0);
-    expect(state.orlaGuestGroups.length).toBe(0);
+    expect(state.graduationStudentCount).toBe(0);
+    expect(state.graduationGuestCountPerStudent).toBe(0);
+    expect(state.graduationGuestGroups.length).toBe(0);
   });
 
   it("should recalculate groups when student and guest counts change", (): void => {
@@ -44,7 +44,7 @@ describe("OrlaController Test Suite", (): void => {
     const venue = new Venue("v1", "Venue", [section]);
     const state = new AppState(venue);
     const eventBus = new EventBus();
-    const controller = new OrlaController(state, eventBus);
+    const controller = new GraduationController(state, eventBus);
 
     controller.handleToggle(true);
 
@@ -53,18 +53,18 @@ describe("OrlaController Test Suite", (): void => {
     // Free seats remaining = stalls-C-1, stalls-C-3 (2 seats)
     // Max guests per student = Math.floor(2 / 1) = 2
     controller.handleStudentsChange(1);
-    expect(state.orlaStudentCount).toBe(1);
-    expect(state.orlaMaxGuests).toBe(2);
+    expect(state.graduationStudentCount).toBe(1);
+    expect(state.graduationMaxGuests).toBe(2);
 
     // Set guests = 2
     // Guest groups should contain G=2 seats (one group of 2)
     controller.handleGuestsChange(2);
-    expect(state.orlaGuestCountPerStudent).toBe(2);
-    expect(state.orlaGuestGroups.length).toBe(1);
+    expect(state.graduationGuestCountPerStudent).toBe(2);
+    expect(state.graduationGuestGroups.length).toBe(1);
 
     // Set guests to 5 (exceeds max 2, should be capped at 2)
     controller.handleGuestsChange(5);
-    expect(state.orlaGuestCountPerStudent).toBe(2);
+    expect(state.graduationGuestCountPerStudent).toBe(2);
   });
 
   it("should support toggling occupancy and editing custom labels on guest groups", (): void => {
@@ -78,14 +78,14 @@ describe("OrlaController Test Suite", (): void => {
     const venue = new Venue("v1", "Venue", [section]);
     const state = new AppState(venue);
     const eventBus = new EventBus();
-    const controller = new OrlaController(state, eventBus);
+    const controller = new GraduationController(state, eventBus);
 
     controller.handleToggle(true);
     controller.handleStudentsChange(1); // 1 student, gets B-1 and B-3
     controller.handleGuestsChange(1); // 1 guest per student, gets C-3 and C-1 as groups
 
-    expect(state.orlaGuestGroups.length).toBe(2);
-    const group = state.orlaGuestGroups[0];
+    expect(state.graduationGuestGroups.length).toBe(2);
+    const group = state.graduationGuestGroups[0];
     expect(group.isOccupied).toBe(false);
     expect(group.customLabel).toBeNull();
 

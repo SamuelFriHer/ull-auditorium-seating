@@ -21,10 +21,10 @@
   --color-accent: hsl(190, 90%, 50%);
   --color-danger: hsl(350, 80%, 50%);
   --color-danger-hover: hsl(350, 80%, 55%);
-  --color-orla-teacher: hsl(142, 70%, 45%);
-  --color-orla-student: hsl(25, 95%, 50%);
-  --color-orla-guest-free: hsl(210, 100%, 50%);
-  --color-orla-guest-occupied: hsl(0, 84%, 60%);
+  --color-graduation-teacher: hsl(142, 70%, 45%);
+  --color-graduation-student: hsl(25, 95%, 50%);
+  --color-graduation-guest-free: hsl(210, 100%, 50%);
+  --color-graduation-guest-occupied: hsl(0, 84%, 60%);
 
   /* Borders and Border Radius */
   --border-radius-sm: 6px;
@@ -282,8 +282,8 @@ body {
   text-decoration: underline;
 }
 
-/* Orla Mode Styles */
-.btn-toggle-orla {
+/* Graduation Mode Styles */
+.btn-toggle-graduation {
   background: var(--color-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
@@ -297,14 +297,14 @@ body {
   display: inline-flex;
   align-items: center;
 }
-.btn-toggle-orla:hover {
+.btn-toggle-graduation:hover {
   background: var(--color-secondary-hover);
   color: var(--text-primary);
 }
-.btn-toggle-orla.active {
+.btn-toggle-graduation.active {
   background: linear-gradient(
     135deg,
-    var(--color-orla-student),
+    var(--color-graduation-student),
     hsl(25, 95%, 40%)
   );
   color: var(--text-primary);
@@ -312,7 +312,7 @@ body {
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
-.orla-inputs-card {
+.graduation-inputs-card {
   padding: 1.25rem;
   background: var(--bg-tertiary);
   border-radius: var(--border-radius-md);
@@ -323,13 +323,13 @@ body {
   gap: 1rem;
 }
 
-.form-group-orla {
+.form-group-graduation {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group-orla label {
+.form-group-graduation label {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
@@ -337,8 +337,8 @@ body {
   letter-spacing: 0.5px;
 }
 
-.form-group-orla input[type="number"],
-.form-group-orla input[type="text"] {
+.form-group-graduation input[type="number"],
+.form-group-graduation input[type="text"] {
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
@@ -393,12 +393,12 @@ body {
 
 .status-indicator.free {
   background: rgba(59, 130, 246, 0.15);
-  color: var(--color-orla-guest-free);
+  color: var(--color-graduation-guest-free);
 }
 
 .status-indicator.occupied {
   background: rgba(239, 68, 68, 0.15);
-  color: var(--color-orla-guest-occupied);
+  color: var(--color-graduation-guest-occupied);
 }
 
 .detail-body {
@@ -444,7 +444,7 @@ body {
 .btn-toggle-occupied.btn-primary {
   background: linear-gradient(
     135deg,
-    var(--color-orla-guest-free),
+    var(--color-graduation-guest-free),
     hsl(210, 100%, 40%)
   );
 }
@@ -452,12 +452,12 @@ body {
 .btn-toggle-occupied.btn-danger {
   background: linear-gradient(
     135deg,
-    var(--color-orla-guest-occupied),
+    var(--color-graduation-guest-occupied),
     hsl(0, 84%, 50%)
   );
 }
 
-.orla-group-item.occupied {
+.graduation-group-item.occupied {
   opacity: 0.8;
 }
 

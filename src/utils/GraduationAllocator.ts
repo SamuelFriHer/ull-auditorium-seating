@@ -1,14 +1,14 @@
 import { Venue } from "../models/Venue";
 import { Seat } from "../models/Seat";
 import { Section } from "../models/Section";
-import { OrlaGuestGroup } from "../models/OrlaGuestGroup";
-import { OrlaSeatSorter } from "./OrlaSeatSorter";
-import { OrlaLocationLabeler } from "./OrlaLocationLabeler";
+import { GraduationGuestGroup } from "../models/GraduationGuestGroup";
+import { GraduationSeatSorter } from "./GraduationSeatSorter";
+import { GraduationLocationLabeler } from "./GraduationLocationLabeler";
 
 /**
- * Handles calculations and allocations for Orla Mode seating.
+ * Handles calculations and allocations for Graduation Mode seating.
  */
-export class OrlaAllocator {
+export class GraduationAllocator {
   /**
    * Stalls rows reserved for students.
    */
@@ -60,13 +60,13 @@ export class OrlaAllocator {
     if (!stalls || studentCount <= 0) return [];
 
     const allocated: string[] = [];
-    for (const row of OrlaAllocator.STUDENT_ROWS) {
+    for (const row of GraduationAllocator.STUDENT_ROWS) {
       const seats = stalls
         .getSeatsInRow(row)
         .filter((s: Seat): boolean => !s.isDisabled);
-      allocated.push(...OrlaAllocator.getHalfRow(seats, true));
+      allocated.push(...GraduationAllocator.getHalfRow(seats, true));
       if (allocated.length >= studentCount) break;
-      allocated.push(...OrlaAllocator.getHalfRow(seats, false));
+      allocated.push(...GraduationAllocator.getHalfRow(seats, false));
       if (allocated.length >= studentCount) break;
     }
 
@@ -90,24 +90,24 @@ export class OrlaAllocator {
    * @param teacherIds - Teacher seat IDs.
    * @param studentIds - Student seat IDs.
    * @param guestCount - Number of guests per student.
-   * @returns Array of OrlaGuestGroup.
+   * @returns Array of GraduationGuestGroup.
    */
   public static allocateGuestGroups(
     venue: Venue,
     teacherIds: string[],
     studentIds: string[],
     guestCount: number,
-  ): OrlaGuestGroup[] {
+  ): GraduationGuestGroup[] {
     if (guestCount <= 0) return [];
 
     const excluded = new Set<string>([...teacherIds, ...studentIds]);
-    const pools = OrlaAllocator.partitionFreeSeats(venue, excluded);
-    const groups: OrlaGuestGroup[] = [];
+    const pools = GraduationAllocator.partitionFreeSeats(venue, excluded);
+    const groups: GraduationGuestGroup[] = [];
     const labelCounts = new Map<string, number>();
 
     for (const [poolKey, seats] of Object.entries(pools)) {
-      const sortedSeats = OrlaSeatSorter.sort(seats, poolKey);
-      OrlaAllocator.processPool(
+      const sortedSeats = GraduationSeatSorter.sort(seats, poolKey);
+      GraduationAllocator.processPool(
         poolKey,
         sortedSeats,
         guestCount,
@@ -149,7 +149,7 @@ export class OrlaAllocator {
     poolKey: string,
     sortedSeats: Seat[],
     guestCount: number,
-    groups: OrlaGuestGroup[],
+    groups: GraduationGuestGroup[],
     labelCounts: Map<string, number>,
   ): void {
     let index = 0;
@@ -160,17 +160,17 @@ export class OrlaAllocator {
       const firstSeat = chunk[0];
       if (!firstSeat) break;
 
-      const prefix = OrlaLocationLabeler.getLocationPrefix(firstSeat);
+      const prefix = GraduationLocationLabeler.getLocationPrefix(firstSeat);
       const count = (labelCounts.get(prefix) || 0) + 1;
       labelCounts.set(prefix, count);
 
-      const id = `orla_guest_${poolKey}_group_${Date.now()}_${Math.floor(
+      const id = `graduation_guest_${poolKey}_group_${Date.now()}_${Math.floor(
         Math.random() * 1000,
       )}_${groups.length}`;
       const provisionalLabel = `${prefix} ${count}`;
       const seatIds = chunk.map((s: Seat): string => s.id);
 
-      groups.push(new OrlaGuestGroup(id, provisionalLabel, seatIds));
+      groups.push(new GraduationGuestGroup(id, provisionalLabel, seatIds));
     }
   }
 }

@@ -3,7 +3,7 @@ import { Seat } from "../models/Seat";
 /**
  * Generates user-friendly Spanish labels for venue seating areas.
  */
-export class OrlaLocationLabeler {
+export class GraduationLocationLabeler {
   /**
    * Formulates a location prefix string in Spanish.
    *

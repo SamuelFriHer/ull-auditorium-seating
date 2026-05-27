@@ -1,14 +1,14 @@
 import type { AppState } from "../models/AppState";
 import type { Seat } from "../models/Seat";
 import type { SeatGroup } from "../models/SeatGroup";
-import type { OrlaGuestGroup } from "../models/OrlaGuestGroup";
-import { OrlaAllocator } from "./OrlaAllocator";
+import type { GraduationGuestGroup } from "../models/GraduationGuestGroup";
+import { GraduationAllocator } from "./GraduationAllocator";
 
 /**
  * Resolves seat colors based on active mode and state.
  */
 export class SeatColorResolver {
-  private readonly isOrlaMode: boolean;
+  private readonly isGraduationMode: boolean;
   private readonly groupColorMap: Map<string, string>;
   private readonly teacherSeats: Set<string>;
   private readonly studentSeats: Set<string>;
@@ -20,14 +20,14 @@ export class SeatColorResolver {
    * @param state - The active application state.
    */
   constructor(state: AppState) {
-    this.isOrlaMode = state.isOrlaMode;
+    this.isGraduationMode = state.isGraduationMode;
     this.groupColorMap = new Map<string, string>();
     this.teacherSeats = new Set<string>();
     this.studentSeats = new Set<string>();
     this.guestColors = new Map<string, string>();
 
-    if (this.isOrlaMode) {
-      this.initOrlaMode(state);
+    if (this.isGraduationMode) {
+      this.initGraduationMode(state);
     } else {
       this.initStandardMode(state);
     }
@@ -40,12 +40,12 @@ export class SeatColorResolver {
    * @returns The CSS color variable or hex string, or null.
    */
   public resolveColor(seat: Seat): string | null {
-    if (this.isOrlaMode) {
+    if (this.isGraduationMode) {
       if (this.teacherSeats.has(seat.id)) {
-        return "var(--color-orla-teacher)";
+        return "var(--color-graduation-teacher)";
       }
       if (this.studentSeats.has(seat.id)) {
-        return "var(--color-orla-student)";
+        return "var(--color-graduation-student)";
       }
       return this.guestColors.get(seat.id) || null;
     }
@@ -62,20 +62,20 @@ export class SeatColorResolver {
     });
   }
 
-  private initOrlaMode(state: AppState): void {
+  private initGraduationMode(state: AppState): void {
     const venue = state.venue;
-    OrlaAllocator.getTeacherSeatIds(venue).forEach((id: string): void => {
+    GraduationAllocator.getTeacherSeatIds(venue).forEach((id: string): void => {
       this.teacherSeats.add(id);
     });
-    OrlaAllocator.getStudentSeatIds(venue, state.orlaStudentCount).forEach(
+    GraduationAllocator.getStudentSeatIds(venue, state.graduationStudentCount).forEach(
       (id: string): void => {
         this.studentSeats.add(id);
       },
     );
-    state.orlaGuestGroups.forEach((group: OrlaGuestGroup): void => {
+    state.graduationGuestGroups.forEach((group: GraduationGuestGroup): void => {
       const color: string = group.isOccupied
-        ? "var(--color-orla-guest-occupied)"
-        : "var(--color-orla-guest-free)";
+        ? "var(--color-graduation-guest-occupied)"
+        : "var(--color-graduation-guest-free)";
       group.seatIds.forEach((seatId: string): void => {
         this.guestColors.set(seatId, color);
       });

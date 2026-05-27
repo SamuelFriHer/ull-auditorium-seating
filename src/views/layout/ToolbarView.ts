@@ -39,12 +39,12 @@ export class ToolbarView implements IView {
    */
   public render(): void {
     const selectedCount = this.state.selectedSeatIds.length;
-    const isOrla = this.state.isOrlaMode;
+    const isGraduation = this.state.isGraduationMode;
     this.container.innerHTML = `
       <div class="toolbar-left">
         <span class="app-logo">🎟️ Paraninfo Seating</span>
-        <button id="btn-toggle-orla" class="btn-toggle-orla ${isOrla ? "active" : ""}" title="Toggles Orla Mode">
-          🎓 Modo Orla: ${isOrla ? "ON" : "OFF"}
+        <button id="btn-toggle-graduation" class="btn-toggle-graduation ${isGraduation ? "active" : ""}" title="Toggles Graduation Mode">
+          🎓 Modo Graduación: ${isGraduation ? "ON" : "OFF"}
         </button>
         <div class="floor-selector" id="floor-selector">
           <button class="btn-floor ${this.state.activeFloor === 0 ? "active" : ""}" data-floor="0" aria-pressed="${this.state.activeFloor === 0 ? "true" : "false"}">P0 (Patio)</button>
@@ -53,10 +53,10 @@ export class ToolbarView implements IView {
         </div>
       </div>
       <div class="toolbar-actions">
-        <button id="btn-clear-selection" class="btn-secondary" ${selectedCount === 0 || isOrla ? "disabled" : ""} title="${isOrla ? "Deshabilitado en Modo Orla" : selectedCount === 0 ? "Selecciona butacas primero" : "Limpiar selección"}">
+        <button id="btn-clear-selection" class="btn-secondary" ${selectedCount === 0 || isGraduation ? "disabled" : ""} title="${isGraduation ? "Deshabilitado en Modo Graduación" : selectedCount === 0 ? "Selecciona butacas primero" : "Limpiar selección"}">
           Limpiar Selección (${selectedCount})
         </button>
-        <button id="btn-unassign-seats" class="btn-secondary" ${selectedCount === 0 || isOrla ? "disabled" : ""} title="${isOrla ? "Deshabilitado en Modo Orla" : selectedCount === 0 ? "Selecciona butacas primero" : "Desasignar butacas seleccionadas"}">
+        <button id="btn-unassign-seats" class="btn-secondary" ${selectedCount === 0 || isGraduation ? "disabled" : ""} title="${isGraduation ? "Deshabilitado en Modo Graduación" : selectedCount === 0 ? "Selecciona butacas primero" : "Desasignar butacas seleccionadas"}">
           Desasignar
         </button>
         <button id="btn-export-layout" class="btn-primary">
@@ -94,10 +94,10 @@ export class ToolbarView implements IView {
    */
   private attachEvents(): void {
     this.container
-      .querySelector("#btn-toggle-orla")
+      .querySelector("#btn-toggle-graduation")
       ?.addEventListener("click", (): void => {
-        this.eventBus.emit("orla:toggle", {
-          active: !this.state.isOrlaMode,
+        this.eventBus.emit("graduation:toggle", {
+          active: !this.state.isGraduationMode,
         });
       });
 

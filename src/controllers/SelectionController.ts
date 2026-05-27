@@ -39,8 +39,8 @@ export class SelectionController {
       return;
     }
 
-    if (this.state.isOrlaMode) {
-      this.handleOrlaSeatClick(seatId);
+    if (this.state.isGraduationMode) {
+      this.handleGraduationSeatClick(seatId);
       return;
     }
 
@@ -56,10 +56,10 @@ export class SelectionController {
   }
 
   /**
-   * Special click handling for guest groups in Orla Mode.
+   * Special click handling for guest groups in Graduation Mode.
    */
-  private handleOrlaSeatClick(seatId: string): void {
-    const group = this.state.orlaGuestGroups.find((g) =>
+  private handleGraduationSeatClick(seatId: string): void {
+    const group = this.state.graduationGuestGroups.find((g) =>
       g.seatIds.includes(seatId),
     );
     if (!group) {
@@ -69,10 +69,10 @@ export class SelectionController {
     const isSelected = this.state.selectedSeatIds.includes(seatId);
     if (isSelected) {
       this.state.selectedSeatIds = [];
-      this.eventBus.emit("orla:guest-group-select", { groupId: null });
+      this.eventBus.emit("graduation:guest-group-select", { groupId: null });
     } else {
       this.state.selectedSeatIds = [...group.seatIds];
-      this.eventBus.emit("orla:guest-group-select", { groupId: group.id });
+      this.eventBus.emit("graduation:guest-group-select", { groupId: group.id });
     }
     this.eventBus.emit("venue:updated");
   }
@@ -83,7 +83,7 @@ export class SelectionController {
    * @param seatId - The identifier of the seat where the drag started.
    */
   public onDragStart(seatId: string): void {
-    if (this.state.isOrlaMode) {
+    if (this.state.isGraduationMode) {
       return;
     }
     const seat = this.state.venue.getSeat(seatId);
@@ -103,7 +103,7 @@ export class SelectionController {
    * @param seatId - The identifier of the seat currently dragged over.
    */
   public onDragOver(seatId: string): void {
-    if (this.state.isOrlaMode) {
+    if (this.state.isGraduationMode) {
       return;
     }
     if (!this.dragStartSeatId) {

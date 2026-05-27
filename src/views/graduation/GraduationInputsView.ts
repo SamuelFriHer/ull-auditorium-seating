@@ -1,11 +1,11 @@
 import type { AppState } from "../../models/AppState";
 
 /**
- * Component for rendering and handling the Orla student/guest inputs.
+ * Component for rendering and handling the Graduation student/guest inputs.
  */
-export class OrlaInputsView {
+export class GraduationInputsView {
   /**
-   * Initializes a new OrlaInputsView.
+   * Initializes a new GraduationInputsView.
    */
   constructor(
     private readonly container: HTMLElement,
@@ -17,14 +17,14 @@ export class OrlaInputsView {
    */
   public render(maxGuests: number): void {
     this.container.innerHTML = `
-      <div class="form-group-orla">
-        <label for="orla-student-count">Estudiantes a graduarse</label>
-        <input type="number" id="orla-student-count" min="0" value="${this.state.orlaStudentCount}" />
+      <div class="form-group-graduation">
+        <label for="graduation-student-count">Estudiantes a graduarse</label>
+        <input type="number" id="graduation-student-count" min="0" value="${this.state.graduationStudentCount}" />
       </div>
-      <div class="form-group-orla">
-        <label for="orla-guest-count">Invitados por estudiante</label>
+      <div class="form-group-graduation">
+        <label for="graduation-guest-count">Invitados por estudiante</label>
         <div class="guest-input-row">
-          <input type="number" id="orla-guest-count" min="0" max="${maxGuests}" value="${this.state.orlaGuestCountPerStudent}" ${this.state.orlaStudentCount <= 0 ? "disabled" : ""} />
+          <input type="number" id="graduation-guest-count" min="0" max="${maxGuests}" value="${this.state.graduationGuestCountPerStudent}" ${this.state.graduationStudentCount <= 0 ? "disabled" : ""} />
           <span class="max-badge">Máx: ${maxGuests}</span>
         </div>
       </div>
@@ -41,23 +41,23 @@ export class OrlaInputsView {
 
   private updateStudentInput(): void {
     const input = this.container.querySelector(
-      "#orla-student-count",
+      "#graduation-student-count",
     ) as HTMLInputElement;
-    if (input && input.value !== String(this.state.orlaStudentCount)) {
-      input.value = String(this.state.orlaStudentCount);
+    if (input && input.value !== String(this.state.graduationStudentCount)) {
+      input.value = String(this.state.graduationStudentCount);
     }
   }
 
   private updateGuestInput(maxGuests: number): void {
     const input = this.container.querySelector(
-      "#orla-guest-count",
+      "#graduation-guest-count",
     ) as HTMLInputElement;
     if (input) {
-      if (input.value !== String(this.state.orlaGuestCountPerStudent)) {
-        input.value = String(this.state.orlaGuestCountPerStudent);
+      if (input.value !== String(this.state.graduationGuestCountPerStudent)) {
+        input.value = String(this.state.graduationGuestCountPerStudent);
       }
       input.max = String(maxGuests);
-      if (this.state.orlaStudentCount <= 0) {
+      if (this.state.graduationStudentCount <= 0) {
         input.setAttribute("disabled", "true");
       } else {
         input.removeAttribute("disabled");

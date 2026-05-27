@@ -3,7 +3,7 @@ import type { EventBus } from "../events/EventBus";
 import { ToolbarView } from "./layout/ToolbarView";
 import { VenueView } from "./venue/VenueView";
 import { GroupPanelView } from "./groups/GroupPanelView";
-import { OrlaPanelView } from "./orla/OrlaPanelView";
+import { GraduationPanelView } from "./graduation/GraduationPanelView";
 import { FooterView } from "./layout/FooterView";
 import type { IView } from "./IView";
 
@@ -18,10 +18,10 @@ export class AppView implements IView {
   private toolbarView: ToolbarView | undefined;
   private venueView: VenueView | undefined;
   private groupPanelView: GroupPanelView | undefined;
-  private orlaPanelView: OrlaPanelView | undefined;
+  private graduationPanelView: GraduationPanelView | undefined;
   private footerView: FooterView | undefined;
 
-  private readonly onOrlaToggle: (payload: { active: boolean }) => void;
+  private readonly onGraduationToggle: (payload: { active: boolean }) => void;
 
   /**
    * Initializes a new AppView instance.
@@ -34,8 +34,8 @@ export class AppView implements IView {
     this.container = container;
     this.state = state;
     this.eventBus = eventBus;
-    this.onOrlaToggle = (payload): void => this.swapSidebar(payload.active);
-    this.eventBus.on("orla:toggle", this.onOrlaToggle);
+    this.onGraduationToggle = (payload): void => this.swapSidebar(payload.active);
+    this.eventBus.on("graduation:toggle", this.onGraduationToggle);
   }
 
   /**
@@ -75,11 +75,11 @@ export class AppView implements IView {
     this.venueView.render();
     this.footerView.render();
 
-    this.swapSidebar(this.state.isOrlaMode);
+    this.swapSidebar(this.state.isGraduationMode);
   }
 
   /**
-   * Swaps the active sidebar panel between Group management and Orla configuration.
+   * Swaps the active sidebar panel between Group management and Graduation configuration.
    */
   private swapSidebar(active: boolean): void {
     const sidebarContainer = this.container.querySelector(
@@ -91,16 +91,16 @@ export class AppView implements IView {
 
     this.groupPanelView?.destroy();
     this.groupPanelView = undefined;
-    this.orlaPanelView?.destroy();
-    this.orlaPanelView = undefined;
+    this.graduationPanelView?.destroy();
+    this.graduationPanelView = undefined;
 
     if (active) {
-      this.orlaPanelView = new OrlaPanelView(
+      this.graduationPanelView = new GraduationPanelView(
         sidebarContainer,
         this.state,
         this.eventBus,
       );
-      this.orlaPanelView.render();
+      this.graduationPanelView.render();
     } else {
       this.groupPanelView = new GroupPanelView(
         sidebarContainer,
@@ -136,17 +136,17 @@ export class AppView implements IView {
    * Cleans up all child view nodes and empties the main container.
    */
   public destroy(): void {
-    this.eventBus.off("orla:toggle", this.onOrlaToggle);
+    this.eventBus.off("graduation:toggle", this.onGraduationToggle);
     this.toolbarView?.destroy();
     this.venueView?.destroy();
     this.groupPanelView?.destroy();
-    this.orlaPanelView?.destroy();
+    this.graduationPanelView?.destroy();
     this.footerView?.destroy();
 
     this.toolbarView = undefined;
     this.venueView = undefined;
     this.groupPanelView = undefined;
-    this.orlaPanelView = undefined;
+    this.graduationPanelView = undefined;
     this.footerView = undefined;
 
     this.container.innerHTML = "";

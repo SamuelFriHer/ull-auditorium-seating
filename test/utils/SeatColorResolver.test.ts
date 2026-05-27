@@ -4,7 +4,7 @@ import { Section } from "../../src/models/Section";
 import { Venue } from "../../src/models/Venue";
 import { AppState } from "../../src/models/AppState";
 import { SeatGroup } from "../../src/models/SeatGroup";
-import { OrlaGuestGroup } from "../../src/models/OrlaGuestGroup";
+import { GraduationGuestGroup } from "../../src/models/GraduationGuestGroup";
 import { SeatColorResolver } from "../../src/utils/SeatColorResolver";
 import { SectionType, SelectionMode } from "../../src/types";
 
@@ -33,17 +33,17 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
 
   describe("Z - Zero", (): void => {
     it("should return null when there are zero seat groups in standard mode", (): void => {
-      state.isOrlaMode = false;
+      state.isGraduationMode = false;
       venue.groups = [];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[2];
       expect(resolver.resolveColor(seat)).toBeNull();
     });
 
-    it("should return null for students/guests when counts and groups are zero in Orla mode", (): void => {
-      state.isOrlaMode = true;
-      state.orlaStudentCount = 0;
-      state.orlaGuestGroups = [];
+    it("should return null for students/guests when counts and groups are zero in Graduation mode", (): void => {
+      state.isGraduationMode = true;
+      state.graduationStudentCount = 0;
+      state.graduationGuestGroups = [];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[2];
       expect(resolver.resolveColor(seat)).toBeNull();
@@ -52,7 +52,7 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
 
   describe("O - One", (): void => {
     it("should resolve color for one seat in a group in standard mode", (): void => {
-      state.isOrlaMode = false;
+      state.isGraduationMode = false;
       venue.groups = [
         new SeatGroup("g1", "Group 1", "#FF0000", ["stalls-B-1"]),
       ];
@@ -62,21 +62,21 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
       expect(resolver.resolveColor(seat)).toBe("#FF0000");
     });
 
-    it("should resolve color for one seat in a guest group in Orla mode", (): void => {
-      state.isOrlaMode = true;
-      state.orlaStudentCount = 0;
-      state.orlaGuestGroups = [
-        new OrlaGuestGroup("gg1", "Group 1", ["stalls-B-2"], false),
+    it("should resolve color for one seat in a guest group in Graduation mode", (): void => {
+      state.isGraduationMode = true;
+      state.graduationStudentCount = 0;
+      state.graduationGuestGroups = [
+        new GraduationGuestGroup("gg1", "Group 1", ["stalls-B-2"], false),
       ];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[3];
-      expect(resolver.resolveColor(seat)).toBe("var(--color-orla-guest-free)");
+      expect(resolver.resolveColor(seat)).toBe("var(--color-graduation-guest-free)");
     });
   });
 
   describe("M - Many", (): void => {
     it("should resolve colors correctly when there are multiple groups", (): void => {
-      state.isOrlaMode = false;
+      state.isGraduationMode = false;
       venue.groups = [
         new SeatGroup("g1", "Group 1", "#FF0000", ["stalls-B-1"]),
         new SeatGroup("g2", "Group 2", "#00FF00", ["stalls-B-2"]),
@@ -91,24 +91,24 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
 
   describe("B - Boundary", (): void => {
     it("should return correct css variables for teacher, student, free, and occupied colors", (): void => {
-      state.isOrlaMode = true;
-      state.orlaStudentCount = 2;
-      state.orlaGuestGroups = [
-        new OrlaGuestGroup("gg1", "Group 1", ["stalls-B-2"], false),
-        new OrlaGuestGroup("gg2", "Group 2", ["stalls-B-4"], true),
+      state.isGraduationMode = true;
+      state.graduationStudentCount = 2;
+      state.graduationGuestGroups = [
+        new GraduationGuestGroup("gg1", "Group 1", ["stalls-B-2"], false),
+        new GraduationGuestGroup("gg2", "Group 2", ["stalls-B-4"], true),
       ];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       expect(resolver.resolveColor(venue.sections[0].seats[0])).toBe(
-        "var(--color-orla-teacher)",
+        "var(--color-graduation-teacher)",
       );
       expect(resolver.resolveColor(venue.sections[0].seats[2])).toBe(
-        "var(--color-orla-student)",
+        "var(--color-graduation-student)",
       );
       expect(resolver.resolveColor(venue.sections[0].seats[3])).toBe(
-        "var(--color-orla-guest-free)",
+        "var(--color-graduation-guest-free)",
       );
       expect(resolver.resolveColor(venue.sections[0].seats[5])).toBe(
-        "var(--color-orla-guest-occupied)",
+        "var(--color-graduation-guest-occupied)",
       );
     });
   });
@@ -125,17 +125,17 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
 
   describe("E - Exceptional", (): void => {
     it("should return null when seat group ID is not defined in the venue groups", (): void => {
-      state.isOrlaMode = false;
+      state.isGraduationMode = false;
       venue.sections[0].seats[2].groupId = "non-existent";
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[2];
       expect(resolver.resolveColor(seat)).toBeNull();
     });
 
-    it("should return null for an unallocated seat in Orla mode", (): void => {
-      state.isOrlaMode = true;
-      state.orlaStudentCount = 0;
-      state.orlaGuestGroups = [];
+    it("should return null for an unallocated seat in Graduation mode", (): void => {
+      state.isGraduationMode = true;
+      state.graduationStudentCount = 0;
+      state.graduationGuestGroups = [];
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[2];
       expect(resolver.resolveColor(seat)).toBeNull();
@@ -143,11 +143,11 @@ describe("SeatColorResolver - ZOMBIES", (): void => {
   });
 
   describe("S - Simple", (): void => {
-    it("should resolve teacher seat color in Orla mode", (): void => {
-      state.isOrlaMode = true;
+    it("should resolve teacher seat color in Graduation mode", (): void => {
+      state.isGraduationMode = true;
       const resolver: SeatColorResolver = new SeatColorResolver(state);
       const seat: Seat = venue.sections[0].seats[0];
-      expect(resolver.resolveColor(seat)).toBe("var(--color-orla-teacher)");
+      expect(resolver.resolveColor(seat)).toBe("var(--color-graduation-teacher)");
     });
   });
 });

@@ -3,7 +3,7 @@ import { Seat } from "../models/Seat";
 /**
  * Handles sorting of seats using a boustrophedon (snake-like) pattern.
  */
-export class OrlaSeatSorter {
+export class GraduationSeatSorter {
   /**
    * Sorts the seats in a pool using a boustrophedon pattern.
    *
@@ -12,14 +12,14 @@ export class OrlaSeatSorter {
    * @returns The sorted array of seats.
    */
   public static sort(seats: Seat[], poolKey: string): Seat[] {
-    const rowsOrder = OrlaSeatSorter.getRowsOrder(poolKey);
+    const rowsOrder = GraduationSeatSorter.getRowsOrder(poolKey);
     const isBoustrophedon =
       poolKey.startsWith("stalls") || poolKey.startsWith("amphitheater");
     const sorted: Seat[] = [];
 
     rowsOrder.forEach((rowName: string, rowIndex: number): void => {
       const rowSeats = seats.filter((s: Seat): boolean => s.row === rowName);
-      OrlaSeatSorter.sortRowSeats(rowSeats, rowIndex, isBoustrophedon);
+      GraduationSeatSorter.sortRowSeats(rowSeats, rowIndex, isBoustrophedon);
       sorted.push(...rowSeats);
     });
 

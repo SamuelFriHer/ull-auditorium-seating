@@ -1,13 +1,13 @@
 import type { AppState } from "../../models/AppState";
 import type { EventBus } from "../../events/EventBus";
-import type { OrlaGuestGroup } from "../../models/OrlaGuestGroup";
+import type { GraduationGuestGroup } from "../../models/GraduationGuestGroup";
 
 /**
- * Component for rendering the list of guest groups in Orla mode.
+ * Component for rendering the list of guest groups in Graduation mode.
  */
-export class OrlaGroupsListView {
+export class GraduationGroupsListView {
   /**
-   * Initializes a new OrlaGroupsListView.
+   * Initializes a new GraduationGroupsListView.
    */
   constructor(
     private readonly container: HTMLElement,
@@ -16,30 +16,30 @@ export class OrlaGroupsListView {
   ) {}
 
   /**
-   * Renders the list of Orla guest groups.
+   * Renders the list of Graduation guest groups.
    */
-  public render(selectedGroup: OrlaGuestGroup | null): void {
+  public render(selectedGroup: GraduationGuestGroup | null): void {
     this.container.innerHTML = "";
-    this.state.orlaGuestGroups.forEach((g): void => {
+    this.state.graduationGuestGroups.forEach((g): void => {
       const item = this.createGroupItem(g, selectedGroup);
       this.container.appendChild(item);
     });
   }
 
   private createGroupItem(
-    group: OrlaGuestGroup,
-    selectedGroup: OrlaGuestGroup | null,
+    group: GraduationGuestGroup,
+    selectedGroup: GraduationGuestGroup | null,
   ): HTMLDivElement {
     const item = document.createElement("div");
     const isSel = selectedGroup?.id === group.id;
 
-    item.className = `group-item orla-group-item ${isSel ? "active" : ""} ${
+    item.className = `group-item graduation-group-item ${isSel ? "active" : ""} ${
       group.isOccupied ? "occupied" : ""
     }`;
 
     const colorVar = group.isOccupied
-      ? "var(--color-orla-guest-occupied)"
-      : "var(--color-orla-guest-free)";
+      ? "var(--color-graduation-guest-occupied)"
+      : "var(--color-graduation-guest-free)";
     item.style.borderLeft = `4px solid ${colorVar}`;
 
     item.innerHTML = `
@@ -51,7 +51,7 @@ export class OrlaGroupsListView {
 
     const info = item.querySelector(".group-info");
     info?.addEventListener("click", (): void => {
-      this.eventBus.emit("orla:guest-group-select", { groupId: group.id });
+      this.eventBus.emit("graduation:guest-group-select", { groupId: group.id });
     });
 
     return item;

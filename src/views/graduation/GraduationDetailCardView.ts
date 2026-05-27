@@ -1,12 +1,12 @@
 import type { AppState } from "../../models/AppState";
-import type { OrlaGuestGroup } from "../../models/OrlaGuestGroup";
+import type { GraduationGuestGroup } from "../../models/GraduationGuestGroup";
 
 /**
- * Component for rendering the detail card of a selected OrlaGuestGroup.
+ * Component for rendering the detail card of a selected GraduationGuestGroup.
  */
-export class OrlaDetailCardView {
+export class GraduationDetailCardView {
   /**
-   * Initializes a new OrlaDetailCardView.
+   * Initializes a new GraduationDetailCardView.
    */
   constructor(
     private readonly container: HTMLElement,
@@ -16,14 +16,14 @@ export class OrlaDetailCardView {
   /**
    * Renders the HTML structure for the selected group details.
    */
-  public render(group: OrlaGuestGroup | null): void {
+  public render(group: GraduationGuestGroup | null): void {
     this.container.innerHTML = this.generateHtml(group);
   }
 
   /**
    * Updates the detail card elements without fully re-rendering if group matches.
    */
-  public update(group: OrlaGuestGroup | null): void {
+  public update(group: GraduationGuestGroup | null): void {
     const detailCard = this.container.querySelector(".selected-group-detail");
     const currentGroupId = detailCard?.getAttribute("data-group-id") || null;
     const targetGroupId = group ? group.id : "null";
@@ -38,7 +38,7 @@ export class OrlaDetailCardView {
   }
 
   private updateCardContent(
-    group: OrlaGuestGroup,
+    group: GraduationGuestGroup,
     detailCard: HTMLElement,
   ): void {
     this.updateLocation(group, detailCard);
@@ -46,14 +46,14 @@ export class OrlaDetailCardView {
     this.updateStatusAndInputs(group, detailCard);
   }
 
-  private updateLocation(group: OrlaGuestGroup, card: HTMLElement): void {
+  private updateLocation(group: GraduationGuestGroup, card: HTMLElement): void {
     const span = card.querySelector(".detail-location");
     if (span) {
       span.textContent = this.getGroupLocationText(group);
     }
   }
 
-  private updateSeats(group: OrlaGuestGroup, card: HTMLElement): void {
+  private updateSeats(group: GraduationGuestGroup, card: HTMLElement): void {
     const span = card.querySelector(".detail-seats");
     if (span) {
       span.textContent = this.formatSeatsText(group);
@@ -61,7 +61,7 @@ export class OrlaDetailCardView {
   }
 
   private updateStatusAndInputs(
-    group: OrlaGuestGroup,
+    group: GraduationGuestGroup,
     card: HTMLElement,
   ): void {
     const status = card.querySelector(".status-indicator");
@@ -69,7 +69,7 @@ export class OrlaDetailCardView {
       status.className = `status-indicator ${group.isOccupied ? "occupied" : "free"}`;
       status.textContent = group.isOccupied ? "Ocupado" : "Libre";
     }
-    const input = card.querySelector("#orla-group-label") as HTMLInputElement;
+    const input = card.querySelector("#graduation-group-label") as HTMLInputElement;
     if (input && document.activeElement !== input) {
       input.value = group.customLabel || "";
     }
@@ -82,7 +82,7 @@ export class OrlaDetailCardView {
     }
   }
 
-  private generateHtml(group: OrlaGuestGroup | null): string {
+  private generateHtml(group: GraduationGuestGroup | null): string {
     if (!group) {
       return `<div class="selected-group-detail empty-detail" data-group-id="null"><p>Selecciona un grupo de invitados en el plano para iniciar la asignación.</p></div>`;
     }
@@ -97,9 +97,9 @@ export class OrlaDetailCardView {
         <div class="detail-body">
           <div class="detail-row"><strong>Ubicación:</strong> <span class="detail-location">${locationText}</span></div>
           <div class="detail-row"><strong>Butacas:</strong> <span class="detail-seats">${seats}</span></div>
-          <div class="form-group-orla">
-            <label for="orla-group-label">Asignar a estudiante</label>
-            <input type="text" id="orla-group-label" value="${group.customLabel || ""}" placeholder="Nombre del estudiante..." />
+          <div class="form-group-graduation">
+            <label for="graduation-group-label">Asignar a estudiante</label>
+            <input type="text" id="graduation-group-label" value="${group.customLabel || ""}" placeholder="Nombre del estudiante..." />
           </div>
           <button class="btn-toggle-occupied ${group.isOccupied ? "btn-danger" : "btn-primary"}">
             ${group.isOccupied ? "Marcar como Libre" : "Entregar Invitaciones"}
@@ -109,7 +109,7 @@ export class OrlaDetailCardView {
     `;
   }
 
-  private formatSeatsText(group: OrlaGuestGroup): string {
+  private formatSeatsText(group: GraduationGuestGroup): string {
     return group.seatIds
       .map((id): string => {
         const seat = this.state.venue.getSeat(id);
@@ -120,7 +120,7 @@ export class OrlaDetailCardView {
       .join(", ");
   }
 
-  private getGroupLocationText(group: OrlaGuestGroup): string {
+  private getGroupLocationText(group: GraduationGuestGroup): string {
     const firstSeatId = group.seatIds[0];
     const seat = firstSeatId ? this.state.venue.getSeat(firstSeatId) : null;
     if (!seat) return group.provisionalLabel;

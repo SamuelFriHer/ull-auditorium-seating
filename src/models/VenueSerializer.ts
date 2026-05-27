@@ -2,7 +2,7 @@ import type { VenueJSON, SeatGroupJSON } from "../types";
 import { Venue } from "./Venue";
 import { SeatGroup } from "./SeatGroup";
 import { AppState } from "./AppState";
-import { OrlaAllocator } from "../utils/OrlaAllocator";
+import { GraduationAllocator } from "../utils/GraduationAllocator";
 import { VenueDefinitionLoader } from "../utils/VenueDefinitionLoader";
 
 /**
@@ -16,8 +16,8 @@ export class VenueSerializer {
    * @returns The serialized VenueJSON representation.
    */
   public static toJSON(venue: Venue, state?: AppState): VenueJSON {
-    if (state && state.isOrlaMode) {
-      return VenueSerializer.serializeOrla(venue, state);
+    if (state && state.isGraduationMode) {
+      return VenueSerializer.serializeGraduation(venue, state);
     }
     return {
       id: venue.id,
@@ -34,19 +34,19 @@ export class VenueSerializer {
   }
 
   /**
-   * Helper to serialize Orla Mode virtual groups.
+   * Helper to serialize Graduation Mode virtual groups.
    */
-  private static serializeOrla(venue: Venue, state: AppState): VenueJSON {
-    const teachers = OrlaAllocator.getTeacherSeatIds(venue);
-    const students = OrlaAllocator.getStudentSeatIds(
+  private static serializeGraduation(venue: Venue, state: AppState): VenueJSON {
+    const teachers = GraduationAllocator.getTeacherSeatIds(venue);
+    const students = GraduationAllocator.getStudentSeatIds(
       venue,
-      state.orlaStudentCount,
+      state.graduationStudentCount,
     );
     const groups: SeatGroupJSON[] = [];
 
     if (teachers.length > 0) {
       groups.push({
-        id: "orla_teachers",
+        id: "graduation_teachers",
         label: "Docentes",
         color: "#10B981",
         seatIds: teachers,
@@ -54,14 +54,14 @@ export class VenueSerializer {
     }
     if (students.length > 0) {
       groups.push({
-        id: "orla_students",
+        id: "graduation_students",
         label: "Estudiantes",
         color: "#F59E0B",
         seatIds: students,
       });
     }
 
-    state.orlaGuestGroups.forEach((g): void => {
+    state.graduationGuestGroups.forEach((g): void => {
       if (g.seatIds.length > 0) {
         groups.push({
           id: g.id,
