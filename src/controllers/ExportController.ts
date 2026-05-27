@@ -1,6 +1,7 @@
 import { AppState } from "../models/AppState";
 import { EventBus } from "../events/EventBus";
 import { VenueSerializer } from "../models/VenueSerializer";
+import { LayoutValidator } from "../utils/LayoutValidator";
 import type { VenueJSON } from "../types";
 
 /**
@@ -42,31 +43,9 @@ export class ExportController {
       const reader = new FileReader();
 
       reader.onload = (): void => {
-        try {
-          const text = reader.result as string;
-          const data = JSON.parse(text) as VenueJSON;
-
-          if (!data || typeof data !== "object") {
-            throw new Error("Invalid layout JSON format");
-          }
-
-          const newVenue = VenueSerializer.fromJSON(data);
-          this.state.venue = newVenue;
-          this.state.selectedSeatIds = [];
-          this.state.activeGroupId = null;
-
-          this.eventBus.emit("venue:loaded", { venue: data });
-          this.eventBus.emit("venue:updated");
-          resolve();
-        } catch (error) {
-          if (error instanceof SyntaxError) {
-            reject(new Error(`Failed to parse JSON file: ${error.message}`));
-          } else if (error instanceof Error) {
-            reject(error);
-          } else {
-            reject(new Error("An unknown error occurred during JSON import."));
-          }
-        }
+        this.processFileContent(reader.result as string)
+          .then(resolve)
+          .catch(reject);
       };
 
       reader.onerror = (): void => {
@@ -75,6 +54,39 @@ export class ExportController {
 
       reader.readAsText(file);
     });
+  }
+
+  /**
+   * Parses, validates, and applies the layout configuration content.
+   *
+   * @param text - The raw text of the layout JSON.
+   * @returns A promise that resolves when layout configuration is applied.
+   */
+  private async processFileContent(text: string): Promise<void> {
+    try {
+      const parsed: unknown = JSON.parse(text);
+      const data: VenueJSON = LayoutValidator.validate(parsed);
+      const newVenue = VenueSerializer.fromJSON(data);
+
+      this.state.venue = newVenue;
+      this.state.selectedSeatIds = [];
+      this.state.activeGroupId = null;
+
+      this.eventBus.emit("venue:loaded", { venue: data });
+      this.eventBus.emit("venue:updated");
+    } catch (error: unknown) {
+      if (error instanceof SyntaxError) {
+        throw new Error(`Failed to parse JSON file: ${error.message}`, {
+          cause: error,
+        });
+      }
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("An unknown error occurred during JSON import.", {
+        cause: error,
+      });
+    }
   }
 
   /**

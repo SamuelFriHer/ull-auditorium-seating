@@ -172,7 +172,7 @@ describe("ExportController - ZOMBIES", (): void => {
       } as unknown as File;
 
       await expect(controller.importFromJSON(mockFile)).rejects.toThrow(
-        "Invalid layout JSON format",
+        "Invalid layout JSON",
       );
     });
 
