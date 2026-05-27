@@ -2,11 +2,10 @@ import type { AppState } from "../models/AppState";
 import type { Section } from "../models/Section";
 import type { EventBus } from "../events/EventBus";
 import type { Seat } from "../models/Seat";
-import type { SeatGroup } from "../models/SeatGroup";
 import { SectionView } from "./SectionView";
 import { SeatView } from "./SeatView";
 import type { IView } from "./IView";
-import { OrlaAllocator } from "../utils/OrlaAllocator";
+import { SeatColorResolver } from "../utils/SeatColorResolver";
 import {
   getSectionIdsForFloor,
   calculateVenueViewBox,
@@ -37,8 +36,8 @@ export class VenueView implements IView {
     this.container = container;
     this.state = state;
     this.eventBus = eventBus;
-    this.sectionViews = new Map();
-    this.seatViews = new Map();
+    this.sectionViews = new Map<string, SectionView>();
+    this.seatViews = new Map<string, SeatView>();
 
     this.onVenueUpdated = (): void => this.updateSeatStates();
     this.onVenueLoaded = (): void => this.render();
@@ -66,55 +65,6 @@ export class VenueView implements IView {
   }
 
   /**
-   * Clears all currently rendered section and seat views.
-   */
-  private clearViews(): void {
-    this.container.innerHTML = "";
-    this.sectionViews.forEach((view: SectionView): void => {
-      view.destroy();
-    });
-    this.sectionViews.clear();
-    this.seatViews.clear();
-  }
-
-  /**
-   * Creates and configures the parent SVG element.
-   */
-  private createSvgContainer(): SVGElement {
-    const svg: SVGElement = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "svg",
-    );
-    svg.setAttribute(
-      "viewBox",
-      calculateVenueViewBox(this.state.venue.sections),
-    );
-    svg.setAttribute("class", "venue-svg");
-    this.container.appendChild(svg);
-    return svg;
-  }
-
-  /**
-   * Renders individual section views and populates cached seat views.
-   *
-   * @param sections - List of sections to render.
-   * @param svg - The parent SVG element container.
-   */
-  private renderSections(sections: Section[], svg: SVGElement): void {
-    sections.forEach((sec: Section): void => {
-      const view = new SectionView(sec, svg, this.eventBus);
-      view.render();
-      this.sectionViews.set(sec.id, view);
-      sec.seats.forEach((s) => {
-        const sv = view.getSeatView(s.id);
-        if (sv) {
-          this.seatViews.set(s.id, sv);
-        }
-      });
-    });
-  }
-
-  /**
    * Highlights the specified seat IDs and updates their state.
    *
    * @param seatIds - List of seat IDs to select.
@@ -134,9 +84,43 @@ export class VenueView implements IView {
     this.clearViews();
   }
 
-  /**
-   * Subscribes to necessary application events.
-   */
+  private clearViews(): void {
+    this.container.innerHTML = "";
+    this.sectionViews.forEach((view: SectionView): void => {
+      view.destroy();
+    });
+    this.sectionViews.clear();
+    this.seatViews.clear();
+  }
+
+  private createSvgContainer(): SVGElement {
+    const svg: SVGElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg",
+    );
+    svg.setAttribute(
+      "viewBox",
+      calculateVenueViewBox(this.state.venue.sections),
+    );
+    svg.setAttribute("class", "venue-svg");
+    this.container.appendChild(svg);
+    return svg;
+  }
+
+  private renderSections(sections: Section[], svg: SVGElement): void {
+    sections.forEach((sec: Section): void => {
+      const view: SectionView = new SectionView(sec, svg, this.eventBus);
+      view.render();
+      this.sectionViews.set(sec.id, view);
+      sec.seats.forEach((s: Seat): void => {
+        const sv: SeatView | null = view.getSeatView(s.id);
+        if (sv) {
+          this.seatViews.set(s.id, sv);
+        }
+      });
+    });
+  }
+
   private bindEvents(): void {
     this.eventBus.on("venue:updated", this.onVenueUpdated);
     this.eventBus.on("venue:loaded", this.onVenueLoaded);
@@ -144,61 +128,19 @@ export class VenueView implements IView {
   }
 
   private updateSeatStates(): void {
-    const selectedSet: Set<string> = new Set(this.state.selectedSeatIds);
-    if (this.state.isOrlaMode) {
-      this.updateOrlaSeatStates(selectedSet);
-      return;
-    }
-
-    const groupColorMap: Map<string, string> = new Map();
-    this.state.venue.groups.forEach((group: SeatGroup): void => {
-      groupColorMap.set(group.id, group.color);
-    });
+    const selectedSet: Set<string> = new Set<string>(
+      this.state.selectedSeatIds,
+    );
+    const resolver: SeatColorResolver = new SeatColorResolver(this.state);
 
     this.seatViews.forEach((seatView: SeatView, seatId: string): void => {
       seatView.setSelected(selectedSet.has(seatId));
       const seat: Seat = seatView.getSeat();
-      const color: string | null = seat.groupId
-        ? groupColorMap.get(seat.groupId) || null
-        : null;
+      const color: string | null = resolver.resolveColor(seat);
       seatView.setGroupColor(color);
     });
   }
 
-  /**
-   * Synchronizes seat elements when Orla Mode is active.
-   */
-  private updateOrlaSeatStates(selectedSet: Set<string>): void {
-    const venue = this.state.venue;
-    const teachers = new Set(OrlaAllocator.getTeacherSeatIds(venue));
-    const students = new Set(
-      OrlaAllocator.getStudentSeatIds(venue, this.state.orlaStudentCount),
-    );
-    const guestColors = new Map<string, string>();
-
-    this.state.orlaGuestGroups.forEach((g): void => {
-      const col = g.isOccupied
-        ? "var(--color-orla-guest-occupied)"
-        : "var(--color-orla-guest-free)";
-      g.seatIds.forEach((id): void => {
-        guestColors.set(id, col);
-      });
-    });
-
-    this.seatViews.forEach((view: SeatView, id: string): void => {
-      view.setSelected(selectedSet.has(id));
-      const col = teachers.has(id)
-        ? "var(--color-orla-teacher)"
-        : students.has(id)
-          ? "var(--color-orla-student)"
-          : guestColors.get(id) || null;
-      view.setGroupColor(col);
-    });
-  }
-
-  /**
-   * Resolves the list of Section models visible for a given floor.
-   */
   private getSectionsForFloor(floor: number): Section[] {
     const floorSectionIds: string[] = getSectionIdsForFloor(floor);
     return this.state.venue.sections.filter((sec: Section): boolean =>
