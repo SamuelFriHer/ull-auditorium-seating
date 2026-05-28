@@ -127,50 +127,70 @@ export class GroupController {
     this.eventBus.emit("group:active-change", { id });
   }
 
-  /**
-   * Registers event handlers on the shared event bus.
-   */
-  private subscribeToEvents(): void {
+  /** Handles group:assign events by assigning seats and updating selected state. */
+  private handleGroupAssign(payload: {
+    seatIds: string[];
+    groupId: string;
+  }): void {
+    this.state.venue.assignSeatsToGroup(payload.seatIds, payload.groupId);
+    const seatIdsSet: Set<string> = new Set(payload.seatIds);
+    this.state.selectedSeatIds = this.state.selectedSeatIds.filter(
+      (id: string): boolean => !seatIdsSet.has(id),
+    );
+    this.eventBus.emit("venue:updated");
+  }
+
+  /** Handles group:unassign events by freeing seats and updating selected state. */
+  private handleGroupUnassign(payload: { seatIds: string[] }): void {
+    this.state.venue.unassignSeats(payload.seatIds);
+    const seatIdsSet: Set<string> = new Set(payload.seatIds);
+    this.state.selectedSeatIds = this.state.selectedSeatIds.filter(
+      (id: string): boolean => !seatIdsSet.has(id),
+    );
+    this.eventBus.emit("venue:updated");
+  }
+
+  /** Registers group lifecycle event handlers. */
+  private subscribeGroupLifeCycle(): void {
     this.eventBus.on(
       "group:create",
-      (payload: { label: string; color?: string }): void => {
-        this.createGroup(payload.label, payload.color);
+      (p: { label: string; color?: string }): void => {
+        this.createGroup(p.label, p.color);
       },
     );
     this.eventBus.on(
       "group:update",
-      (payload: { id: string; patch: Partial<SeatGroupJSON> }): void => {
-        this.updateGroup(payload.id, payload.patch);
+      (p: { id: string; patch: Partial<SeatGroupJSON> }): void => {
+        this.updateGroup(p.id, p.patch);
       },
     );
-    this.eventBus.on("group:delete", (payload: { id: string }): void => {
-      this.deleteGroup(payload.id);
+    this.eventBus.on("group:delete", (p: { id: string }): void => {
+      this.deleteGroup(p.id);
     });
+  }
+
+  /** Registers group assignment and selection event handlers. */
+  private subscribeGroupAssignments(): void {
     this.eventBus.on(
       "group:assign",
-      (payload: { seatIds: string[]; groupId: string }): void => {
-        this.state.venue.assignSeatsToGroup(payload.seatIds, payload.groupId);
-        this.state.selectedSeatIds = this.state.selectedSeatIds.filter(
-          (id: string): boolean => !payload.seatIds.includes(id),
-        );
-        this.eventBus.emit("venue:updated");
+      (p: { seatIds: string[]; groupId: string }): void => {
+        this.handleGroupAssign(p);
       },
     );
-    this.eventBus.on(
-      "group:unassign",
-      (payload: { seatIds: string[] }): void => {
-        this.state.venue.unassignSeats(payload.seatIds);
-        this.state.selectedSeatIds = this.state.selectedSeatIds.filter(
-          (id: string): boolean => !payload.seatIds.includes(id),
-        );
-        this.eventBus.emit("venue:updated");
-      },
-    );
+    this.eventBus.on("group:unassign", (p: { seatIds: string[] }): void => {
+      this.handleGroupUnassign(p);
+    });
     this.eventBus.on(
       "group:active-change",
-      (payload: { id: string | null }): void => {
-        this.setActiveGroup(payload.id);
+      (p: { id: string | null }): void => {
+        this.setActiveGroup(p.id);
       },
     );
+  }
+
+  /** Registers event handlers on the shared event bus. */
+  private subscribeToEvents(): void {
+    this.subscribeGroupLifeCycle();
+    this.subscribeGroupAssignments();
   }
 }
