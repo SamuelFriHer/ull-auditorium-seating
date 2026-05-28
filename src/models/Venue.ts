@@ -80,11 +80,13 @@ export class Venue {
 
     this.unassignSeats(seatIds);
 
+    const groupSeatsSet = new Set<string>(targetGroup.seatIds);
     for (const id of seatIds) {
       const seat = this.getSeat(id);
       if (seat) {
         seat.groupId = gid;
-        if (!targetGroup.seatIds.includes(id)) {
+        if (!groupSeatsSet.has(id)) {
+          groupSeatsSet.add(id);
           targetGroup.seatIds.push(id);
         }
       }
@@ -97,17 +99,24 @@ export class Venue {
    * @param seatIds - List of seat IDs to unassign.
    */
   public unassignSeats(seatIds: string[]): void {
+    const unassignSet = new Set<string>(seatIds);
+    const affectedGroups = new Set<SeatGroup>();
+
     for (const id of seatIds) {
       const seat = this.getSeat(id);
       if (seat && seat.groupId) {
         const previousGroup = this.getGroup(seat.groupId);
         if (previousGroup) {
-          previousGroup.seatIds = previousGroup.seatIds.filter(
-            (sId: string): boolean => sId !== id,
-          );
+          affectedGroups.add(previousGroup);
         }
         seat.groupId = null;
       }
+    }
+
+    for (const group of affectedGroups) {
+      group.seatIds = group.seatIds.filter(
+        (sId: string): boolean => !unassignSet.has(sId),
+      );
     }
   }
 }
