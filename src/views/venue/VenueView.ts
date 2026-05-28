@@ -143,8 +143,9 @@ export class VenueView implements IView {
 
   private getSectionsForFloor(floor: number): Section[] {
     const floorSectionIds: string[] = getSectionIdsForFloor(floor);
+    const floorSectionIdsSet: Set<string> = new Set<string>(floorSectionIds);
     return this.state.venue.sections.filter((sec: Section): boolean =>
-      floorSectionIds.includes(sec.id),
+      floorSectionIdsSet.has(sec.id),
     );
   }
 }
