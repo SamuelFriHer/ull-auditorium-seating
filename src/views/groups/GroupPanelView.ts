@@ -56,8 +56,10 @@ export class GroupPanelView implements IView {
       
       <form id="create-group-form" class="create-group-form">
         <div class="form-group">
-          <input type="text" id="group-name-input" placeholder="Nuevo grupo..." aria-label="Nombre del nuevo grupo" required />
-          <input type="color" id="group-color-input" value="${this.getNextColor()}" title="Color del grupo" aria-label="Color del nuevo grupo" />
+          <label class="sr-only" for="group-name-input">Nombre del nuevo grupo</label>
+          <input type="text" id="group-name-input" placeholder="Nuevo grupo..." required />
+          <label class="sr-only" for="group-color-input">Color del nuevo grupo</label>
+          <input type="color" id="group-color-input" value="${this.getNextColor()}" title="Color del grupo" />
         </div>
         <button type="submit" class="btn-create-group">Crear Grupo</button>
       </form>

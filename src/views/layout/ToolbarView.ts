@@ -43,7 +43,7 @@ export class ToolbarView implements IView {
     this.container.innerHTML = `
       <div class="toolbar-left">
         <span class="app-logo">🎟️ Paraninfo Seating</span>
-        <button id="btn-toggle-graduation" class="btn-toggle-graduation ${isGraduation ? "active" : ""}" title="Toggles Graduation Mode">
+        <button id="btn-toggle-graduation" class="btn-toggle-graduation ${isGraduation ? "active" : ""}" title="${isGraduation ? "Desactivar Modo Orla" : "Activar Modo Orla"}" aria-pressed="${isGraduation ? "true" : "false"}">
           🎓 Modo Orla: ${isGraduation ? "ON" : "OFF"}
         </button>
         <div class="floor-selector" id="floor-selector">
