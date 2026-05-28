@@ -2,42 +2,65 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppView } from "../../src/views/AppView";
 import { AppState } from "../../src/models/AppState";
 import { EventBus } from "../../src/events/EventBus";
+import { ToolbarView } from "../../src/views/layout/ToolbarView";
+import { VenueView } from "../../src/views/venue/VenueView";
+import { GroupPanelView } from "../../src/views/groups/GroupPanelView";
 
-vi.mock("../../src/views/layout/ToolbarView", () => {
-  return {
-    ToolbarView: class {
-      public render = vi.fn();
-      public destroy = vi.fn();
-    },
-  };
-});
+const mockToolbar = {
+  render: vi.fn(),
+  destroy: vi.fn(),
+};
 
-vi.mock("../../src/views/venue/VenueView", () => {
-  return {
-    VenueView: class {
-      public render = vi.fn();
-      public destroy = vi.fn();
-    },
-  };
-});
+const mockVenue = {
+  render: vi.fn(),
+  destroy: vi.fn(),
+};
 
-vi.mock("../../src/views/groups/GroupPanelView", () => {
-  return {
-    GroupPanelView: class {
-      public render = vi.fn();
-      public destroy = vi.fn();
-    },
-  };
-});
+const mockGroupPanel = {
+  render: vi.fn(),
+  destroy: vi.fn(),
+};
 
-vi.mock("../../src/views/layout/FooterView", () => {
-  return {
-    FooterView: class {
-      public render = vi.fn();
-      public destroy = vi.fn();
+const mockFooter = {
+  render: vi.fn(),
+  destroy: vi.fn(),
+};
+
+vi.mock("../../src/views/layout/ToolbarView", () => ({
+  ToolbarView: vi.fn().mockImplementation(
+    class {
+      public render = mockToolbar.render;
+      public destroy = mockToolbar.destroy;
     },
-  };
-});
+  ),
+}));
+
+vi.mock("../../src/views/venue/VenueView", () => ({
+  VenueView: vi.fn().mockImplementation(
+    class {
+      public render = mockVenue.render;
+      public destroy = mockVenue.destroy;
+    },
+  ),
+}));
+
+vi.mock("../../src/views/groups/GroupPanelView", () => ({
+  GroupPanelView: vi.fn().mockImplementation(
+    class {
+      public render = mockGroupPanel.render;
+      public destroy = mockGroupPanel.destroy;
+    },
+  ),
+}));
+
+vi.mock("../../src/views/layout/FooterView", () => ({
+  FooterView: vi.fn().mockImplementation(
+    class {
+      public render = mockFooter.render;
+      public destroy = mockFooter.destroy;
+    },
+  ),
+}));
 
 class MockElement {
   public innerHTML: string = "";
@@ -61,12 +84,6 @@ describe("AppView - ZOMBIES", (): void => {
   });
 
   describe("Z - Zero", (): void => {
-    it("should return null for all child views before initial render", (): void => {
-      expect(view.getToolbarView()).toBeNull();
-      expect(view.getVenueView()).toBeNull();
-      expect(view.getGroupPanelView()).toBeNull();
-    });
-
     it("should reset container innerHTML to empty on destroy", (): void => {
       view.render();
       view.destroy();
@@ -77,9 +94,9 @@ describe("AppView - ZOMBIES", (): void => {
   describe("O - One", (): void => {
     it("should instantiate child views on render", (): void => {
       view.render();
-      expect(view.getToolbarView()).not.toBeNull();
-      expect(view.getVenueView()).not.toBeNull();
-      expect(view.getGroupPanelView()).not.toBeNull();
+      expect(ToolbarView).toHaveBeenCalled();
+      expect(VenueView).toHaveBeenCalled();
+      expect(GroupPanelView).toHaveBeenCalled();
     });
   });
 
@@ -92,27 +109,16 @@ describe("AppView - ZOMBIES", (): void => {
       expect(container.innerHTML).toContain("app-sidebar-container");
       expect(container.innerHTML).toContain("app-footer-container");
 
-      expect(view.getToolbarView()?.render).toHaveBeenCalled();
-      expect(view.getVenueView()?.render).toHaveBeenCalled();
-      expect(view.getGroupPanelView()?.render).toHaveBeenCalled();
-    });
-  });
-
-  describe("B - Boundary", (): void => {
-    it("should clean references to null after calling destroy", (): void => {
-      view.render();
-      view.destroy();
-      expect(view.getToolbarView()).toBeNull();
-      expect(view.getVenueView()).toBeNull();
-      expect(view.getGroupPanelView()).toBeNull();
+      expect(mockToolbar.render).toHaveBeenCalled();
+      expect(mockVenue.render).toHaveBeenCalled();
+      expect(mockGroupPanel.render).toHaveBeenCalled();
     });
   });
 
   describe("I - Interface", (): void => {
-    it("should export required methods and getters of view structure", (): void => {
+    it("should export required methods of view structure", (): void => {
       expect(typeof view.render).toBe("function");
       expect(typeof view.destroy).toBe("function");
-      expect(typeof view.getToolbarView).toBe("function");
     });
   });
 
@@ -127,14 +133,10 @@ describe("AppView - ZOMBIES", (): void => {
   describe("S - Simple", (): void => {
     it("should call destroy on instantiated child views", (): void => {
       view.render();
-      const toolbar = view.getToolbarView();
-      const venue = view.getVenueView();
-      const groupPanel = view.getGroupPanelView();
-
       view.destroy();
-      expect(toolbar?.destroy).toHaveBeenCalled();
-      expect(venue?.destroy).toHaveBeenCalled();
-      expect(groupPanel?.destroy).toHaveBeenCalled();
+      expect(mockToolbar.destroy).toHaveBeenCalled();
+      expect(mockVenue.destroy).toHaveBeenCalled();
+      expect(mockGroupPanel.destroy).toHaveBeenCalled();
     });
   });
 });

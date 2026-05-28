@@ -28,24 +28,4 @@ export class Section {
     this.type = type;
     this.seats = seats;
   }
-
-  /**
-   * Finds a seat within the section by its ID.
-   *
-   * @param id - The seat identifier to look for.
-   * @returns The matching Seat, or null if not found.
-   */
-  public getSeat(id: string): Seat | null {
-    return this.seats.find((seat: Seat): boolean => seat.id === id) || null;
-  }
-
-  /**
-   * Retrieves all seats belonging to a specific row in the section.
-   *
-   * @param row - The row label.
-   * @returns An array of matching Seat instances.
-   */
-  public getSeatsInRow(row: string): Seat[] {
-    return this.seats.filter((seat: Seat): boolean => seat.row === row);
-  }
 }

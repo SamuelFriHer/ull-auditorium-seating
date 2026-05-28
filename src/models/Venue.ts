@@ -55,16 +55,6 @@ export class Venue {
   }
 
   /**
-   * Finds a section by its ID.
-   *
-   * @param id - Section identifier.
-   * @returns The matching Section, or null if not found.
-   */
-  public getSection(id: string): Section | null {
-    return this.sections.find((sec: Section): boolean => sec.id === id) || null;
-  }
-
-  /**
    * Finds a seat group by its ID.
    *
    * @param id - Group identifier.

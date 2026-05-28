@@ -113,27 +113,6 @@ export class AppView implements IView {
   }
 
   /**
-   * Returns the instantiated ToolbarView, if rendered.
-   */
-  public getToolbarView(): ToolbarView | null {
-    return this.toolbarView || null;
-  }
-
-  /**
-   * Returns the instantiated VenueView, if rendered.
-   */
-  public getVenueView(): VenueView | null {
-    return this.venueView || null;
-  }
-
-  /**
-   * Returns the instantiated GroupPanelView, if rendered.
-   */
-  public getGroupPanelView(): GroupPanelView | null {
-    return this.groupPanelView || null;
-  }
-
-  /**
    * Cleans up all child view nodes and empties the main container.
    */
   public destroy(): void {

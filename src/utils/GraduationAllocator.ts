@@ -38,7 +38,9 @@ export class GraduationAllocator {
    * @returns Array of seat IDs.
    */
   public static getTeacherSeatIds(venue: Venue): string[] {
-    const stalls = venue.getSection("stalls");
+    const stalls = venue.sections.find(
+      (s: Section): boolean => s.id === "stalls",
+    );
     if (!stalls) return [];
     return stalls.seats
       .filter((s: Seat): boolean => s.row === "A" && !s.isDisabled)
@@ -56,13 +58,15 @@ export class GraduationAllocator {
     venue: Venue,
     studentCount: number,
   ): string[] {
-    const stalls = venue.getSection("stalls");
+    const stalls = venue.sections.find(
+      (s: Section): boolean => s.id === "stalls",
+    );
     if (!stalls || studentCount <= 0) return [];
 
     const allocated: string[] = [];
     for (const row of GraduationAllocator.STUDENT_ROWS) {
-      const seats = stalls
-        .getSeatsInRow(row)
+      const seats = stalls.seats
+        .filter((seat: Seat): boolean => seat.row === row)
         .filter((s: Seat): boolean => !s.isDisabled);
       allocated.push(...GraduationAllocator.getHalfRow(seats, true));
       if (allocated.length >= studentCount) break;

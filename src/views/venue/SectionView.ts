@@ -1,4 +1,5 @@
 import type { Section } from "../../models/Section";
+import type { Seat } from "../../models/Seat";
 import type { EventBus } from "../../events/EventBus";
 import { SeatView } from "./SeatView";
 import type { IView } from "../IView";
@@ -114,7 +115,8 @@ export class SectionView implements IView {
     if (event.button !== 0) {
       return;
     }
-    const seat = this.section.getSeat(seatId);
+    const seat =
+      this.section.seats.find((s: Seat): boolean => s.id === seatId) || null;
     if (!seat || seat.isDisabled) {
       return;
     }
@@ -147,7 +149,8 @@ export class SectionView implements IView {
     const target = event.target as SVGElement;
     const seatId = target.getAttribute("data-seat-id");
     if (seatId && seatId !== this.lastHoveredSeatId) {
-      const seat = this.section.getSeat(seatId);
+      const seat =
+        this.section.seats.find((s: Seat): boolean => s.id === seatId) || null;
       if (!seat || seat.isDisabled) {
         return;
       }
