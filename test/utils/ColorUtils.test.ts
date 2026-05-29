@@ -22,6 +22,25 @@ describe("ColorUtils - ZOMBIES", (): void => {
       const color10: string = ColorUtils.generateColor(10);
       expect(color10).toBe(color0);
     });
+
+    it("should return correct colors for each valid index from the palette", (): void => {
+      const expectedPalette: string[] = [
+        "#6366F1",
+        "#10B981",
+        "#F59E0B",
+        "#F43F5E",
+        "#06B6D4",
+        "#8B5CF6",
+        "#14B8A6",
+        "#F97316",
+        "#0EA5E9",
+        "#EC4899",
+      ];
+      expectedPalette.forEach((expectedColor: string, index: number): void => {
+        const color: string = ColorUtils.generateColor(index);
+        expect(color).toBe(expectedColor);
+      });
+    });
   });
 
   describe("B - Boundary", (): void => {
@@ -40,6 +59,32 @@ describe("ColorUtils - ZOMBIES", (): void => {
     it("should return a string matching hex color regex format", (): void => {
       const color: string = ColorUtils.generateColor(0);
       expect(color).toMatch(/^#[0-9A-Fa-f]{6}$/);
+    });
+
+    it("should contain the exact expected color strings in the private PALETTE array", (): void => {
+      const colorUtilsClass: { PALETTE: string[] } = ColorUtils as unknown as {
+        PALETTE: string[];
+      };
+      const expectedPalette: string[] = [
+        "#6366F1",
+        "#10B981",
+        "#F59E0B",
+        "#F43F5E",
+        "#06B6D4",
+        "#8B5CF6",
+        "#14B8A6",
+        "#F97316",
+        "#0EA5E9",
+        "#EC4899",
+      ];
+      expect(colorUtilsClass.PALETTE).toEqual(expectedPalette);
+    });
+  });
+
+  describe("E - Exceptional", (): void => {
+    it("should return the fallback color when index is NaN", (): void => {
+      const color: string = ColorUtils.generateColor(NaN);
+      expect(color).toBe("#6366F1");
     });
   });
 });
