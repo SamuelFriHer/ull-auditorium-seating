@@ -20,10 +20,13 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "preview": "astro preview",
+    "stryker": "stryker run",
     "test": "vitest"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
